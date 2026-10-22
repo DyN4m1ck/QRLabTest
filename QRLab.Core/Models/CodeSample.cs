@@ -1,10 +1,5 @@
 namespace QRLab.Core.Models;
 
-public enum Format
-{
-    QrCode, Barcode
-}
-
 public sealed class CodeSample
 {
     public Guid Id { get; init; } = Guid.NewGuid();
@@ -13,4 +8,3 @@ public sealed class CodeSample
     public Format Format { get; set; } = Format.QrCode;
     public List<MutationStep> Mutations { get; } = [];
 }
-

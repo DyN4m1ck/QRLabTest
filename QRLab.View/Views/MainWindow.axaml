@@ -9,9 +9,6 @@
     <DataTemplate DataType="{x:Type vm:ReadingViewModel}">
       <views:ReadingView/>
     </DataTemplate>
-    <DataTemplate DataType="{x:Type vm:ComparisonViewModel}">
-      <views:ComparisonView/>
-    </DataTemplate>
   </Window.DataTemplates>
   <Grid RowDefinitions="42,*,30,76">
     <Border x:Name="TitleBar" Background="#1A1F21" BorderBrush="#303839" BorderThickness="0,0,0,1" Padding="12,0" PointerPressed="TitleBarPointerPressed">
@@ -43,7 +40,7 @@
     <ContentControl Grid.Row="1" Content="{Binding SelectedScreen}" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch"/>
     <Border Grid.Row="2" BorderBrush="#303839" BorderThickness="0,1,0,0" Padding="18,0">
       <Grid ColumnDefinitions="Auto,*,Auto">
-        <TextBlock Text="ПРОЕКТ / LP-04     •     НАБОР 01" Classes="muted" FontSize="10"/>
+        <TextBlock Text="{Binding Workspace.SetName}" Classes="muted" FontSize="10" MaxWidth="300" TextTrimming="CharacterEllipsis"/>
         <TextBlock Grid.Column="1" Text="{Binding Workspace.Notice}" TextTrimming="CharacterEllipsis" TextAlignment="Center" Margin="16,0" Classes="muted" FontSize="10"/>
         <TextBlock Grid.Column="2" Text="AVALONIA / MVVM" Classes="muted" FontSize="10"/>
       </Grid>
@@ -69,8 +66,8 @@
       <Border Classes="card" Width="480" Padding="32" HorizontalAlignment="Center" VerticalAlignment="Center">
         <StackPanel Spacing="18">
           <TextBlock Text="QRLab / лаборатория кодов" FontSize="22" FontWeight="SemiBold"/>
-          <TextBlock Text="Четыре этапа исследования: создание набора, настройка искажений, распознавание и сравнение." TextWrapping="Wrap"/>
-          <TextBlock Text="Интерактивный макет. Изображения и результаты демонстрационные. Настоящие генерация, обработка и декодирование будут подключены через сервисы." Classes="muted" TextWrapping="Wrap"/>
+          <TextBlock Text="Создание набора кодов, настройка искажений и распознавание." TextWrapping="Wrap"/>
+          <TextBlock Text="Генерация и гауссово размытие работают с растровыми изображениями. Распознавание пока демонстрационное." Classes="muted" TextWrapping="Wrap"/>
           <Button Classes="primary" Content="Вернуться к работе" Command="{Binding AboutCommand}"/>
         </StackPanel>
       </Border>

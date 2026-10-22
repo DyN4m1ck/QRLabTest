@@ -1,6 +1,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using QRLab.Core.Services;
+using QRLab.Core.Interfaces;
+using QRLab.Core.Models.Recognition;
 
 namespace QRLab.View.ViewModels;
 public sealed partial class ReadingViewModel : ScreenViewModel
@@ -39,7 +40,7 @@ public sealed partial class ReadingViewModel : ScreenViewModel
     partial void OnFilterChanged(string value) { OnPropertyChanged(nameof(Results)); OnPropertyChanged(nameof(NoResults)); }
     partial void OnSearchChanged(string value) { OnPropertyChanged(nameof(Results)); OnPropertyChanged(nameof(NoResults)); }
     [RelayCommand] private void Run() { Workspace.Recognize(new(Decoder, (int)(Timeout ?? 500), Enhanced)); Refresh(); }
-    [RelayCommand] private void ConfirmExport() { Workspace.Export(new(ExportDestination, "CSV", true)); IsExportOpen = false; }
+    [RelayCommand] private void ConfirmExport() { Workspace.Notice = "Экспорт результатов распознавания пока не реализован."; IsExportOpen = false; }
     [RelayCommand] private void Export() => IsExportOpen = !IsExportOpen;
     private void Refresh()
     {

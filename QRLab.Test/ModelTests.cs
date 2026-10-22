@@ -1,3 +1,5 @@
+using QRLab.Test.Fixtures;
+using QRLab.Core.Models.Generation;
 using QRLab.Core.Models;
 using QRLab.View.ViewModels;
 using Xunit;
@@ -6,19 +8,6 @@ namespace QRLab.Test;
 
 public sealed class ModelTests
 {
-    [Fact]
-    public void ProjectHasIdentityAndIndependentSampleCollection()
-    {
-        var project = new ExperimentProject();
-        var other = new ExperimentProject();
-        Assert.NotEqual(Guid.Empty, project.Id);
-        Assert.NotEqual(project.Id, other.Id);
-        Assert.Equal("Новый проект", project.Name);
-        project.Samples.Add(new CodeSample());
-        Assert.Single(project.Samples);
-        Assert.Empty(other.Samples);
-    }
-
     [Fact]
     public void SampleRetainsPayloadAndMutationDescription()
     {
@@ -53,8 +42,8 @@ public sealed class ModelTests
     [Fact]
     public void NavigationRaisesNotificationsForAllSections()
     {
-        var vm = new MainWindowViewModel(new Image.Demo.PrototypeData());
-        Assert.Equal(4, vm.Screens.Count);
+        var vm = TestApplicationFactory.CreateMainWindow();
+        Assert.Equal(3, vm.Screens.Count);
         Assert.Equal("Генерация кодов", vm.SelectedScreen.Title);
         var notifications = new List<string?>();
         vm.PropertyChanged += (_, args) => notifications.Add(args.PropertyName);
@@ -63,6 +52,6 @@ public sealed class ModelTests
             vm.SelectedScreen = screen;
             Assert.Same(screen, vm.SelectedScreen);
         }
-        Assert.Equal(3, notifications.Count(n => n == nameof(vm.SelectedScreen)));
+        Assert.Equal(2, notifications.Count(n => n == nameof(vm.SelectedScreen)));
     }
 }

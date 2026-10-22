@@ -1,4 +1,9 @@
-<UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:vm="using:QRLab.View.ViewModels" xmlns:c="using:QRLab.View.Controls" xmlns:icons="using:QRLab.View.Controls" x:Class="QRLab.View.Views.MutationsView" x:DataType="vm:MutationsViewModel">
+<UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:vm="using:QRLab.View.ViewModels" xmlns:c="using:QRLab.View.Controls" xmlns:icons="using:QRLab.View.Controls" xmlns:m="clr-namespace:QRLab.Core.Models.Mutations;assembly=QRLab.Core" xmlns:p="using:QRLab.View.Presentation" x:Class="QRLab.View.Views.MutationsView" x:DataType="vm:MutationsViewModel">
+  <UserControl.Resources>
+    <DataTemplate x:Key="MutationChoiceTemplate" x:DataType="p:EnumOption">
+      <TextBlock Text="{Binding Name}"/>
+    </DataTemplate>
+  </UserControl.Resources>
   <Grid Margin="18" RowDefinitions="Auto,*">
     <Grid ColumnDefinitions="*,Auto" Margin="0,0,0,16">
       <StackPanel Spacing="4">
@@ -34,24 +39,24 @@
           </Border>
           <ScrollViewer Grid.Row="1">
             <StackPanel Margin="14" Spacing="8">
-              <ListBox Classes="tabs" ItemsSource="{Binding Modes}" SelectedItem="{Binding Mode, Mode=TwoWay}">
+              <ListBox Classes="tabs" ItemsSource="{Binding Modes}" ItemTemplate="{StaticResource MutationChoiceTemplate}" SelectedValue="{Binding Mode, Mode=TwoWay}" SelectedValueBinding="{Binding Value, DataType=p:EnumOption}">
                 <ListBox.ItemsPanel>
                   <ItemsPanelTemplate>
                     <StackPanel Orientation="Horizontal"/>
                   </ItemsPanelTemplate>
                 </ListBox.ItemsPanel>
               </ListBox>
-              <ListBox Classes="tabs iconTabs tools" ItemsSource="{Binding Tools}" SelectedItem="{Binding Tool, Mode=TwoWay}">
+              <ListBox Classes="tabs iconTabs tools" ItemsSource="{Binding Tools}" SelectedValue="{Binding Tool, Mode=TwoWay}" SelectedValueBinding="{Binding Value, DataType=p:EnumOption}">
                 <ListBox.ItemsPanel>
                   <ItemsPanelTemplate>
                     <StackPanel Orientation="Horizontal"/>
                   </ItemsPanelTemplate>
                 </ListBox.ItemsPanel>
                 <ListBox.ItemTemplate>
-                  <DataTemplate x:DataType="x:String">
+                  <DataTemplate x:DataType="p:EnumOption">
                     <StackPanel Spacing="4">
-                      <icons:SvgIcon Source="{Binding Converter={StaticResource IconName}}" HorizontalAlignment="Center"/>
-                      <TextBlock Text="{Binding}"/>
+                      <icons:SvgIcon Source="{Binding Icon}" HorizontalAlignment="Center"/>
+                      <TextBlock Text="{Binding Name}"/>
                     </StackPanel>
                   </DataTemplate>
                 </ListBox.ItemTemplate>
@@ -67,7 +72,7 @@
               </Grid>
               <Slider Minimum="5" Maximum="100" Value="{Binding Opacity, Mode=TwoWay}"/>
               <TextBlock Text="Цвет кисти                     ●  #111918" Classes="muted"/>
-              <Button IsEnabled="{Binding IsManual}" Command="{Binding AddCommand}" CommandParameter="2" HorizontalAlignment="Stretch">
+              <Button IsEnabled="{Binding IsManual}" Command="{Binding AddCommand}" CommandParameter="{x:Static m:MutationKind.Ink}" HorizontalAlignment="Stretch">
                 <StackPanel Orientation="Horizontal" Spacing="7">
                   <icons:SvgIcon Source="plus"/>
                   <TextBlock Text="Добавить мазок"/>
@@ -75,21 +80,21 @@
               </Button>
               <Border Classes="divider"/>
               <TextBlock Text="Программные искажения" Classes="heading"/>
-              <Button Command="{Binding AddCommand}" CommandParameter="1" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch">
+              <Button Command="{Binding AddCommand}" CommandParameter="{x:Static m:MutationKind.GaussianBlur}" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch">
                 <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="8">
                   <icons:SvgIcon Source="drop"/>
                   <TextBlock Text="Размытие Гаусса" Grid.Column="1"/>
                   <icons:SvgIcon Source="plus" Grid.Column="2" Width="12" Height="12"/>
                 </Grid>
               </Button>
-              <Button Command="{Binding AddCommand}" CommandParameter="2" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch">
+              <Button Command="{Binding AddCommand}" CommandParameter="{x:Static m:MutationKind.Ink}" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch">
                 <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="8">
                   <icons:SvgIcon Source="droplets"/>
                   <TextBlock Text="Случайные кляксы" Grid.Column="1"/>
                   <icons:SvgIcon Source="plus" Grid.Column="2" Width="12" Height="12"/>
                 </Grid>
               </Button>
-              <Button Command="{Binding AddCommand}" CommandParameter="3" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch">
+              <Button Command="{Binding AddCommand}" CommandParameter="{x:Static m:MutationKind.Perspective}" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch">
                 <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="8">
                   <icons:SvgIcon Source="selection"/>
                   <TextBlock Text="Перспектива" Grid.Column="1"/>
@@ -106,7 +111,7 @@
                   <TextBlock Text="Новый случайный вариант"/>
                 </StackPanel>
               </Button>
-              <TextBlock Text="Выберите операцию в истории, чтобы настроить её параметры." Classes="muted" FontSize="10" TextWrapping="Wrap"/>
+              <TextBlock Text="Работает гауссово размытие. Кляксы и перспектива пока не изменяют изображение. Выберите кадр для настройки." Classes="muted" FontSize="10" TextWrapping="Wrap"/>
             </StackPanel>
           </ScrollViewer>
         </Grid>
@@ -122,7 +127,7 @@
               </Grid>
             </Border>
             <Border Grid.Row="1" Background="#0D1112" Padding="30">
-              <c:CodePreview Modules="{Binding PreviewModules}" AllowZoom="True" PaintCommand="{Binding PaintCommand}" PanEnabled="{Binding IsHand}"/>
+              <c:RasterPreview Image="{Binding PreviewImage}" AllowZoom="True" PaintCommand="{Binding PaintCommand}" PanEnabled="{Binding IsHand}"/>
             </Border>
             <TextBlock Grid.Row="2" Text="Клик — мазок  •  Рука — перемещение  •  Колесо — масштаб" Classes="muted" FontSize="10" Margin="14,0"/>
           </Grid>
@@ -132,7 +137,7 @@
             <Border Classes="panelHead">
               <TextBlock Text="Промежуточные кадры" Classes="heading"/>
             </Border>
-            <ListBox Grid.Row="1" ItemsSource="{Binding Frames}" SelectedItem="{Binding SelectedOperation, Mode=TwoWay}" HorizontalAlignment="Stretch">
+            <ListBox Grid.Row="1" ItemsSource="{Binding Frames}" SelectedItem="{Binding SelectedFrame, Mode=TwoWay}" HorizontalAlignment="Stretch">
               <ListBox.ItemsPanel>
                 <ItemsPanelTemplate>
                   <StackPanel Orientation="Horizontal"/>
@@ -141,7 +146,7 @@
               <ListBox.ItemTemplate>
                 <DataTemplate x:DataType="vm:OperationViewModel">
                   <StackPanel Width="105" Spacing="6">
-                    <c:CodePreview Height="70" Modules="{Binding Modules}"/>
+                    <c:RasterPreview Height="70" Image="{Binding Image}"/>
                     <TextBlock Text="{Binding Name}" FontSize="10" TextTrimming="CharacterEllipsis"/>
                     <TextBlock Text="{Binding Number}" Classes="muted" FontSize="9"/>
                   </StackPanel>
@@ -182,11 +187,11 @@
                 <TextBlock Text="{Binding AngleX, StringFormat={}{0:N0}°}" Classes="muted"/>
                 <TextBlock Text="Наклон по Y" Classes="label"/>
                 <Slider Minimum="-30" Maximum="30" Value="{Binding AngleY, Mode=TwoWay}"/>
-                <ComboBox ItemsSource="{Binding Interpolations}" SelectedItem="{Binding Interpolation, Mode=TwoWay}"/>
+                <ComboBox ItemsSource="{Binding Interpolations}" ItemTemplate="{StaticResource MutationChoiceTemplate}" SelectedValue="{Binding Interpolation, Mode=TwoWay}" SelectedValueBinding="{Binding Value, DataType=p:EnumOption}"/>
               </StackPanel>
               <StackPanel IsVisible="{Binding IsBlur}">
                 <TextBlock Text="Сила размытия, σ" Classes="label"/>
-                <Slider Minimum="0.1" Maximum="10" Value="{Binding Blur, Mode=TwoWay}"/>
+                <Slider Minimum="0" Maximum="10" Value="{Binding Blur, Mode=TwoWay}"/>
                 <TextBlock Text="{Binding Blur, StringFormat={}{0:N1} px}" Classes="muted"/>
               </StackPanel>
               <StackPanel IsVisible="{Binding IsInk}">
