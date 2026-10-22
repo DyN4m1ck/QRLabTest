@@ -54,12 +54,14 @@
                   </DataTemplate>
                 </ListBox.ItemTemplate>
               </ListBox>
+              
               <TextBlock Text="Источник содержимого" Classes="label"/>
               <ComboBox ItemsSource="{Binding Sources}" SelectedItem="{Binding Source, Mode=TwoWay}"/>
               <TextBlock Text="Содержимое / шаблон" Classes="label"/>
               <TextBox Text="{Binding Template, Mode=TwoWay}" AcceptsReturn="True" Height="62" TextWrapping="Wrap"/>
               <TextBlock Text="{}{num} — порядковый номер образца" Classes="muted" FontSize="10"/>
-              <Grid ColumnDefinitions="*,*" ColumnSpacing="8" IsEnabled="{Binding IsBatch}">
+              
+              <Grid ColumnDefinitions="*,*" ColumnSpacing="8" IsVisible="{Binding IsBatch}">
                 <StackPanel>
                   <TextBlock Text="Первый номер" Classes="label"/>
                   <NumericUpDown Value="{Binding FirstNumber, Mode=TwoWay}" Minimum="1" Maximum="999999" FormatString="0"/>
@@ -69,7 +71,9 @@
                   <NumericUpDown Value="{Binding Count, Mode=TwoWay}" Minimum="1" Maximum="500" FormatString="0"/>
                 </StackPanel>
               </Grid>
+              
               <Border Classes="divider"/>
+              
               <Grid ColumnDefinitions="*,*" ColumnSpacing="8">
                 <StackPanel>
                   <TextBlock Text="Ширина, пикс." Classes="label"/>
@@ -81,17 +85,19 @@
                 </StackPanel>
               </Grid>
               <Grid ColumnDefinitions="*,*" ColumnSpacing="8">
-                <StackPanel>
-                  <TextBlock Text="Коррекция QR" Classes="label"/>
-                  <ComboBox IsEnabled="{Binding IsQr}" ItemsSource="{Binding Corrections}" SelectedItem="{Binding Correction, Mode=TwoWay}"/>
-                </StackPanel>
-                <StackPanel Grid.Column="1">
+                <StackPanel Grid.Column="0">
                   <TextBlock Text="Формат файла" Classes="label"/>
                   <ComboBox ItemsSource="{Binding FileFormats}" SelectedItem="{Binding FileFormat, Mode=TwoWay}"/>
                 </StackPanel>
+                <StackPanel Grid.Column="1" IsVisible="{Binding IsQr}">
+                  <TextBlock Text="Коррекция QR" Classes="label"/>
+                  <ComboBox ItemsSource="{Binding Corrections}" SelectedItem="{Binding Correction, Mode=TwoWay}"/>
+                </StackPanel>
               </Grid>
-              <TextBlock Text="Тихая зона, модулей" Classes="label"/>
-              <NumericUpDown Value="{Binding QuietZone, Mode=TwoWay}" Minimum="0" Maximum="16" FormatString="0"/>
+              <StackPanel>
+                <TextBlock Text="Тихая зона, модулей" Classes="label"/>
+                <NumericUpDown Value="{Binding QuietZone, Mode=TwoWay}" Minimum="0" Maximum="16" FormatString="0"/>
+              </StackPanel>
             </StackPanel>
           </ScrollViewer>
           <StackPanel Grid.Row="2" Margin="14" Spacing="8">

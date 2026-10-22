@@ -6,6 +6,7 @@
         <entry key="QRLab.View/App.axaml" value="QRLab.View/QRLab.View.csproj" />
         <entry key="QRLab.View/Styles/AppStyles.axaml" value="QRLab.View/QRLab.View.csproj" />
         <entry key="QRLab.View/Views/ComparisonView.axaml" value="QRLab.View/QRLab.View.csproj" />
+        <entry key="QRLab.View/Views/GenerationView.axaml" value="QRLab.Test/QRLab.Test.csproj" />
         <entry key="QRLab.View/Views/MainWindow.axaml" value="QRLab.View/QRLab.View.csproj" />
         <entry key="QRLab.View/Views/ReadingView.axaml" value="QRLab.Test/QRLab.Test.csproj" />
       </map>

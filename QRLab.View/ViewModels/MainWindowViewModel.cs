@@ -20,9 +20,12 @@ public sealed partial class MainWindowViewModel : ObservableObject
     public MainWindowViewModel(IPrototypeData data)
     {
         Workspace = new(data);
-        Generation = new(Workspace); Mutations = new(Workspace);
-        Reading = new(Workspace); Comparison = new(Workspace);
-        Screens = [Generation, Mutations, Reading, Comparison]; _selectedScreen = Generation;
+        Generation = new(Workspace); 
+        Mutations = new(Workspace);
+        Reading = new(Workspace); 
+        Comparison = new(Workspace);
+        Screens = [Generation, Mutations, Reading, Comparison]; 
+        _selectedScreen = Generation;
     }
     partial void OnSelectedScreenChanged(ScreenViewModel value) { if (value == Comparison) Comparison.Refresh(); }
     [RelayCommand] private void Navigate(string number) => SelectedScreen = Screens.First(s => s.Number == number);

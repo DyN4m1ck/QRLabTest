@@ -6,7 +6,6 @@
     <Version>0.1.0</Version>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Avalonia.Svg.Skia" Version="11.3.0" />
     <ProjectReference Include="../QRLab.Core/QRLab.Core.csproj" />
     <ProjectReference Include="../QRLab.Image/QRLab.Image.csproj" />
     <PackageReference Include="Avalonia" Version="12.1.4" />

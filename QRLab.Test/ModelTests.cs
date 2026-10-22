@@ -1,6 +1,4 @@
 using QRLab.Core.Models;
-using QRLab.Core.Services;
-using QRLab.Image;
 using QRLab.View.ViewModels;
 using Xunit;
 
@@ -24,13 +22,13 @@ public sealed class ModelTests
     [Fact]
     public void SampleRetainsPayloadAndMutationDescription()
     {
-        var sample = new CodeSample { Name = "Образец", Content = "QRLab", Format = "QR" };
+        var sample = new CodeSample { Name = "Образец", Content = "QRLab", Format = Format.QrCode };
         var mutation = new MutationStep { Name = "Шум", Intensity = 0.25 };
         sample.Mutations.Add(mutation);
         Assert.NotEqual(Guid.Empty, sample.Id);
         Assert.NotEqual(Guid.Empty, mutation.Id);
         Assert.Equal("QRLab", sample.Content);
-        Assert.Equal("QR", sample.Format);
+        Assert.Equal(Format.QrCode, sample.Format);
         Assert.Equal(0.25, Assert.Single(sample.Mutations).Intensity);
     }
 
@@ -55,7 +53,7 @@ public sealed class ModelTests
     [Fact]
     public void NavigationRaisesNotificationsForAllSections()
     {
-        var vm = new MainWindowViewModel(new QRLab.Image.Demo.PrototypeData());
+        var vm = new MainWindowViewModel(new Image.Demo.PrototypeData());
         Assert.Equal(4, vm.Screens.Count);
         Assert.Equal("Генерация кодов", vm.SelectedScreen.Title);
         var notifications = new List<string?>();

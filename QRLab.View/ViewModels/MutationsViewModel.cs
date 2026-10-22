@@ -73,7 +73,7 @@ public sealed partial class MutationsViewModel : ScreenViewModel
         if (!_loading && value?.Options is { } options)
         {
             _loading = true;
-            AngleX = options.AngleX; AngleY = options.AngleY; Blur = options.Blur;
+            AngleX = options.AngleX;AngleY = options.AngleY; Blur = options.Blur;
             BrushSize = options.BrushSize; Opacity = options.Opacity;
             _centerX = options.CenterX; _centerY = options.CenterY;
             Seed = options.Seed; Interpolation = options.Interpolation;
