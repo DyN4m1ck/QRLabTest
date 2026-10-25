@@ -17,12 +17,12 @@ public sealed partial class MainWindowViewModel : ObservableObject
     public IReadOnlyList<ScreenViewModel> Screens { get; }
     [ObservableProperty] private ScreenViewModel _selectedScreen;
     [ObservableProperty] private bool _isAboutOpen;
-    public MainWindowViewModel(ICodeGenerator generator, ISampleSetStorage storage, IMutationProcessor mutations, ICodeRecognizer recognizer)
+    public MainWindowViewModel(ICodeGenerator generator, ISampleSetStorage storage, IMutationProcessor mutations, ICodeRecognizer recognizer, IRecognitionReportExporter reportExporter)
     {
         Workspace = new(generator, storage, mutations, recognizer);
         Generation = new(Workspace); 
         Mutations = new(Workspace);
-        Reading = new(Workspace); 
+        Reading = new(Workspace, reportExporter);
         Screens = [Generation, Mutations, Reading];
         _selectedScreen = Generation;
     }

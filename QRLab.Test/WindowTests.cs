@@ -1,3 +1,5 @@
+using QRLab.View.Presentation.Recognition;
+using Avalonia.Input;
 using QRLab.Core.Models.Mutations;
 using QRLab.Test.Fixtures;
 using QRLab.Core.Models.Generation;
@@ -134,6 +136,59 @@ public sealed class WindowTests
     }
 
     [AvaloniaFact]
+    public void EveryMainPreviewCanPanZoomAndResetWithoutEditingTheImage()
+    {
+        var vm = TestApplicationFactory.CreateMainWindow();
+        vm.Generation.Count = 3; vm.Generation.ImageWidth = 512; vm.Generation.ImageHeight = 384;
+        vm.Generation.GenerateCommand.Execute(null);
+        var window = new MainWindow { DataContext = vm };
+        try
+        {
+            window.Show();
+            foreach (var (screen, name) in new[] { ("01", "GenerationPreview"), ("02", "MutationPreview"), ("03", "ReadingPreview") })
+            {
+                vm.NavigateCommand.Execute(screen); Dispatcher.UIThread.RunJobs(); window.UpdateLayout();
+                var preview = window.GetVisualDescendants().OfType<RasterPreview>().Single(control => control.Name == name);
+                var start = preview.TranslatePoint(new Point(preview.Bounds.Width / 2, preview.Bounds.Height / 2), window)!.Value;
+                var end = start + new Vector(35, 20);
+                window.MouseDown(start, MouseButton.Left); window.MouseMove(end); window.MouseUp(end, MouseButton.Left);
+                Assert.Equal(new Vector(35, 20), preview.PanOffset);
+                window.MouseWheel(end, new Vector(0, 2));
+                Assert.True(preview.Zoom > 1);
+                var reset = window.GetVisualDescendants().OfType<Button>().Single(button => ReferenceEquals(button.Command, preview.ResetViewCommand));
+                reset.Command!.Execute(null);
+                Assert.Equal(default(Vector), preview.PanOffset); Assert.Equal(1, preview.Zoom);
+                Assert.Empty(vm.Mutations.Operations);
+            }
+        }
+        finally { window.Close(); }
+    }
+
+    [AvaloniaFact]
+    public void MutationSampleNumberAndArrowsStayInSync()
+    {
+        var vm = TestApplicationFactory.CreateMainWindow();
+        vm.Generation.Count = 3; vm.Generation.ImageWidth = 256; vm.Generation.ImageHeight = 256;
+        vm.Generation.GenerateCommand.Execute(null);
+        var window = new MainWindow { DataContext = vm };
+        try
+        {
+            window.Show(); vm.NavigateCommand.Execute("02"); Dispatcher.UIThread.RunJobs();
+            var input = window.GetVisualDescendants().OfType<NumericUpDown>().Single(control => control.Name == "SampleNumberInput");
+            input.Value = 2; Dispatcher.UIThread.RunJobs();
+            Assert.Same(vm.Workspace.Samples[1], vm.Workspace.SelectedSample);
+            vm.Workspace.NextCommand.Execute(null); Dispatcher.UIThread.RunJobs();
+            Assert.Equal(3, input.Value); Assert.False(vm.Workspace.NextCommand.CanExecute(null));
+            vm.Workspace.PreviousCommand.Execute(null); Dispatcher.UIThread.RunJobs();
+            Assert.Equal(2, input.Value);
+            vm.Workspace.SampleNumber = 100;
+            Assert.Same(vm.Workspace.Samples[1], vm.Workspace.SelectedSample);
+            Assert.Equal(3, vm.Workspace.SampleCount);
+        }
+        finally { window.Close(); }
+    }
+
+    [AvaloniaFact]
     public async Task NavigationButtonsAndFrameSelectionKeepSharedSample()
     {
         var vm = TestApplicationFactory.CreateMainWindow();
@@ -151,7 +206,7 @@ public sealed class WindowTests
             vm.Mutations.AngleX = 19;
             Dispatcher.UIThread.RunJobs();
             Assert.Equal(19, Assert.IsType<PerspectiveMutationOptions>(vm.Mutations.Operations.Last().Options).AngleX);
-            Assert.Same(vm.Workspace.SelectedSample!.OriginalImage, vm.Mutations.PreviewImage);
+            Assert.NotSame(vm.Workspace.SelectedSample!.OriginalImage, vm.Mutations.PreviewImage);
             vm.Mutations.AddCommand.Execute(MutationKind.GaussianBlur);
             var blurred = vm.Mutations.PreviewImage;
             vm.Mutations.Blur = 3;
@@ -166,11 +221,11 @@ public sealed class WindowTests
             Dispatcher.UIThread.RunJobs();
             Assert.NotNull(vm.Workspace.SelectedSample);
             vm.NavigateCommand.Execute("03");
-            vm.Reading.RunCommand.Execute(null);
+            await vm.Reading.RunCommand.ExecuteAsync(null);
             Dispatcher.UIThread.RunJobs();
             Assert.Equal(120, vm.Reading.ResultsChecked);
             var selected = vm.Workspace.SelectedSample;
-            vm.Reading.Filter = "Ошибки"; vm.Reading.Search = "no-match";
+            vm.Reading.Filter = RecognitionFilter.Failed; vm.Reading.Search = "no-match";
             Dispatcher.UIThread.RunJobs();
             Assert.Same(selected, vm.Workspace.SelectedSample);
             vm.NavigateCommand.Execute("01"); Dispatcher.UIThread.RunJobs();

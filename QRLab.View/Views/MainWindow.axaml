@@ -67,7 +67,7 @@
         <StackPanel Spacing="18">
           <TextBlock Text="QRLab / лаборатория кодов" FontSize="22" FontWeight="SemiBold"/>
           <TextBlock Text="Создание набора кодов, настройка искажений и распознавание." TextWrapping="Wrap"/>
-          <TextBlock Text="Генерация и гауссово размытие работают с растровыми изображениями. Распознавание пока демонстрационное." Classes="muted" TextWrapping="Wrap"/>
+          <TextBlock Text="Генерация кодов, алгоритмические искажения, декодирование ZXing.Net и выгрузка результатов в CSV." Classes="muted" TextWrapping="Wrap"/>
           <Button Classes="primary" Content="Вернуться к работе" Command="{Binding AboutCommand}"/>
         </StackPanel>
       </Border>

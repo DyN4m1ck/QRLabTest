@@ -5,5 +5,5 @@ namespace QRLab.Core.Interfaces.Recognition;
 
 public interface ICodeRecognizer
 {
-    IReadOnlyList<RecognitionPreview> Recognize(IReadOnlyList<SamplePreview> samples, RecognitionOptions options);
+    Task<IReadOnlyList<RecognitionPreview>> RecognizeAsync(IReadOnlyList<SamplePreview> samples, RecognitionOptions options, CancellationToken cancellationToken = default);
 }

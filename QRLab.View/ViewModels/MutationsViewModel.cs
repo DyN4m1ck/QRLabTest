@@ -11,18 +11,14 @@ namespace QRLab.View.ViewModels;
 public sealed partial class MutationsViewModel : ScreenViewModel
 {
     private bool _loading;
-    private double _centerX = MutationDefaults.CenterX, _centerY = MutationDefaults.CenterY;
     private readonly Stack<OperationViewModel> _undone = new();
     public WorkspaceViewModel Workspace { get; }
-    public IReadOnlyList<EnumOption<MutationTool>> Tools => MutationChoices.Tools;
-    public IReadOnlyList<EnumOption<MutationMode>> Modes => MutationChoices.Modes;
     public IReadOnlyList<EnumOption<ImageInterpolation>> Interpolations => MutationChoices.Interpolations;
-    [ObservableProperty] private MutationTool _tool = MutationTool.Brush;
-    [ObservableProperty] private MutationMode _mode = MutationMode.Manual;
-    [ObservableProperty] private double _brushSize = MutationDefaults.BrushSize;
-    [ObservableProperty] private double _opacity = MutationDefaults.Opacity;
     [ObservableProperty] private double _angleX = MutationDefaults.AngleX;
     [ObservableProperty] private double _angleY = MutationDefaults.AngleY;
+    [ObservableProperty] private double _distance = MutationDefaults.Distance;
+    [ObservableProperty] private double _noiseDensity = MutationDefaults.NoisePercent;
+    [ObservableProperty] private double _saltPercent = MutationDefaults.SaltPercent;
     [ObservableProperty] private double _blur = MutationDefaults.Sigma;
     [ObservableProperty] private decimal? _seed = MutationDefaults.Seed;
     [ObservableProperty] private ImageInterpolation _interpolation = ImageInterpolation.Bicubic;
@@ -37,10 +33,9 @@ public sealed partial class MutationsViewModel : ScreenViewModel
         set => SelectedOperation = value?.Options is null ? null : value;
     }
     public RasterImage? PreviewImage => SelectedOperation?.Image ?? Workspace.SelectedSample?.OriginalImage;
-    public bool IsManual => Mode == MutationMode.Manual;
-    public bool IsHand => Tool == MutationTool.Hand;
+    public IReadOnlyList<EnumOption<MutationKind>> AvailableMutations => MutationChoices.Operations;
+    public bool IsSaltAndPepper => SelectedOperation?.Options is SaltAndPepperOptions;
     public bool IsBlur => SelectedOperation?.Options is GaussianBlurOptions;
-    public bool IsInk => SelectedOperation?.Options is InkMutationOptions;
     public bool IsPerspective => SelectedOperation?.Options is PerspectiveMutationOptions;
     public bool CanUndo => Operations.Count > 0;
     public bool CanRedo => _undone.Count > 0;
@@ -59,26 +54,25 @@ public sealed partial class MutationsViewModel : ScreenViewModel
         };
     }
 
-    partial void OnModeChanged(MutationMode value) => OnPropertyChanged(nameof(IsManual));
-    partial void OnToolChanged(MutationTool value) => OnPropertyChanged(nameof(IsHand));
     partial void OnAngleXChanged(double value) => UpdatePreview();
     partial void OnAngleYChanged(double value) => UpdatePreview();
+    partial void OnDistanceChanged(double value) => UpdatePreview();
+    partial void OnNoiseDensityChanged(double value) => UpdatePreview();
+    partial void OnSaltPercentChanged(double value) => UpdatePreview();
+    partial void OnSeedChanged(decimal? value) => UpdatePreview();
     partial void OnBlurChanged(double value) => UpdatePreview();
-    partial void OnBrushSizeChanged(double value) => UpdatePreview();
     partial void OnInterpolationChanged(ImageInterpolation value) => UpdatePreview();
-    partial void OnOpacityChanged(double value) => UpdatePreview();
 
     private MutationOptions CurrentOptions(MutationKind kind) => kind switch
     {
         MutationKind.GaussianBlur => new GaussianBlurOptions { Sigma = Blur },
-        MutationKind.Ink => new InkMutationOptions
+        MutationKind.SaltAndPepper => new SaltAndPepperOptions
         {
-            BrushSize = BrushSize, Opacity = Opacity, CenterX = _centerX, CenterY = _centerY,
-            Erase = Tool == MutationTool.Eraser, Seed = (int)(Seed ?? MutationDefaults.Seed)
+            DensityPercent = NoiseDensity, SaltPercent = SaltPercent, Seed = checked((int)(Seed ?? MutationDefaults.Seed))
         },
         MutationKind.Perspective => new PerspectiveMutationOptions
         {
-            AngleX = AngleX, AngleY = AngleY, Interpolation = Interpolation, Seed = (int)(Seed ?? MutationDefaults.Seed)
+            AngleX = AngleX, AngleY = AngleY, Distance = Distance, Interpolation = Interpolation
         },
         _ => throw new ArgumentOutOfRangeException(nameof(kind))
     };
@@ -89,9 +83,10 @@ public sealed partial class MutationsViewModel : ScreenViewModel
         var index = Operations.IndexOf(SelectedOperation);
         if (index < 0 || Workspace.SelectedSample is not { } sample) return;
         var chain = Operations.Select(o => o.Options!).ToArray();
-        chain[index] = CurrentOptions(options.Kind);
+
         try
         {
+            chain[index] = CurrentOptions(options.Kind);
             var frames = Workspace.Mutate(sample.OriginalImage, chain);
             _loading = true;
             try
@@ -105,7 +100,7 @@ public sealed partial class MutationsViewModel : ScreenViewModel
             }
             finally { _loading = false; }
         }
-        catch (ArgumentException exception) { Workspace.ShowError(exception.Message); }
+        catch (Exception exception) when (exception is ArgumentException or OverflowException) { Workspace.ShowError(exception.Message); }
     }
 
     partial void OnSelectedOperationChanged(OperationViewModel? value)
@@ -115,22 +110,17 @@ public sealed partial class MutationsViewModel : ScreenViewModel
         switch (value?.Options)
         {
             case GaussianBlurOptions blur: Blur = blur.Sigma; break;
-            case InkMutationOptions ink:
-                BrushSize = ink.BrushSize; Opacity = ink.Opacity; _centerX = ink.CenterX; _centerY = ink.CenterY; Seed = ink.Seed; break;
+            case SaltAndPepperOptions noise:
+                NoiseDensity = noise.DensityPercent; SaltPercent = noise.SaltPercent; Seed = noise.Seed; break;
             case PerspectiveMutationOptions perspective:
-                AngleX = perspective.AngleX; AngleY = perspective.AngleY; Seed = perspective.Seed; Interpolation = perspective.Interpolation; break;
+                AngleX = perspective.AngleX; AngleY = perspective.AngleY; Distance = perspective.Distance; Interpolation = perspective.Interpolation; break;
         }
         _loading = false;
-        foreach (var name in new[] { nameof(SelectedFrame), nameof(PreviewImage), nameof(IsBlur), nameof(IsInk), nameof(IsPerspective) })
+        foreach (var name in new[] { nameof(SelectedFrame), nameof(PreviewImage), nameof(IsBlur), nameof(IsSaltAndPepper), nameof(IsPerspective) })
             OnPropertyChanged(name);
     }
 
-    [RelayCommand]
-    private void Paint(PreviewPoint point)
-    {
-        if (!IsManual || IsHand) return;
-        _centerX = point.X; _centerY = point.Y; Add(MutationKind.Ink);
-    }
+
 
     [RelayCommand]
     private void Add(MutationKind kind)
@@ -144,7 +134,7 @@ public sealed partial class MutationsViewModel : ScreenViewModel
             _undone.Clear(); Refresh();
             SelectedOperation = Operations.Last();
         }
-        catch (ArgumentException exception) { Workspace.ShowError(exception.Message); }
+        catch (Exception exception) when (exception is ArgumentException or OverflowException) { Workspace.ShowError(exception.Message); }
     }
 
     [RelayCommand(CanExecute = nameof(CanUndo))]
@@ -169,8 +159,8 @@ public sealed partial class MutationsViewModel : ScreenViewModel
     [RelayCommand]
     private void Randomize()
     {
-        Seed = (Seed ?? MutationDefaults.Seed) + 1;
-        Add(MutationKind.Perspective);
+        Seed = Seed >= int.MaxValue ? 0 : (Seed ?? MutationDefaults.Seed) + 1;
+
     }
 
     [RelayCommand]
@@ -187,7 +177,7 @@ public sealed partial class MutationsViewModel : ScreenViewModel
             Refresh();
             Workspace.Notice = $"Цепочка из {chain.Length} операций назначена {targets.Length + 1} образцам.";
         }
-        catch (ArgumentException exception) { Workspace.ShowError(exception.Message); }
+        catch (Exception exception) when (exception is ArgumentException or OverflowException) { Workspace.ShowError(exception.Message); }
         finally { IsBusy = false; }
     }
 

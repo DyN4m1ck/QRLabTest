@@ -9,7 +9,6 @@ public sealed class IconNameConverter : IValueConverter
     public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture) => value switch
     {
         "01" => "gen", "02" => "brush", "03" => "calc",
-        "Кисть" => "brush", "Ластик" => "erase", "Рука" => "hand",
         CodeKind.QrCode => "qrcode", CodeKind.Barcode => "barcode",
         _ => "selection"
     };

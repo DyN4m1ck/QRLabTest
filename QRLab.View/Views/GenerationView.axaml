@@ -138,14 +138,18 @@
       </Border>
       <Grid Grid.Column="1" RowDefinitions="*,170" RowSpacing="12">
         <Border Classes="card" ClipToBounds="True">
-          <Grid RowDefinitions="Auto,*,52">
+          <Grid RowDefinitions="Auto,*,40,52">
             <Border Classes="panelHead">
               <TextBlock Text="Предпросмотр" Classes="heading"/>
             </Border>
             <Border Grid.Row="1" Background="#0D1112" Padding="30">
-              <c:RasterPreview Image="{Binding Workspace.SelectedSample.Image}" AllowZoom="True"/>
+              <c:RasterPreview x:Name="GenerationPreview" Image="{Binding Workspace.SelectedSample.Image}" AllowZoom="True"/>
             </Border>
-            <Grid Grid.Row="2" ColumnDefinitions="*,Auto,Auto,Auto" Margin="14,0">
+            <Grid Grid.Row="2" ColumnDefinitions="*,Auto" Margin="14,0">
+              <TextBlock Text="ЛКМ — перемещение  •  Колесо — масштаб" Classes="muted" FontSize="10"/>
+              <Button x:Name="ResetGenerationViewport" Grid.Column="1" Content="Сбросить вид" Classes="flat" Command="{Binding #GenerationPreview.ResetViewCommand}"/>
+            </Grid>
+            <Grid Grid.Row="3" ColumnDefinitions="*,Auto,Auto,Auto" Margin="14,0">
               <TextBlock Text="{Binding Workspace.SelectedSample.Name}" Classes="mono"/>
               <Button Grid.Column="1" Classes="flat" Command="{Binding Workspace.PreviousCommand}" ToolTip.Tip="Предыдущий образец">
                 <StackPanel Orientation="Horizontal" Spacing="7">

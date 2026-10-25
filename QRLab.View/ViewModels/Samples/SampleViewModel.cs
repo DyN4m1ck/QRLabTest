@@ -6,6 +6,7 @@ using QRLab.Core.Models.Mutations;
 using QRLab.Core.Models.Recognition;
 using QRLab.Core.Models.Samples;
 using QRLab.View.Presentation;
+using QRLab.View.Presentation.Recognition;
 using ResultStatus = QRLab.Core.Models.Recognition.Status;
 
 namespace QRLab.View.ViewModels;
@@ -26,6 +27,7 @@ public sealed partial class SampleViewModel : ObservableObject
         Operations.CollectionChanged += (_, _) =>
         {
             OnPropertyChanged(nameof(Image));
+            OnPropertyChanged(nameof(Chain));
             Result = null;
         };
     }
@@ -38,19 +40,13 @@ public sealed partial class SampleViewModel : ObservableObject
     public RasterImage Image => Operations.LastOrDefault()?.Image ?? OriginalImage;
     public OperationViewModel OriginalFrame { get; }
     public ObservableCollection<OperationViewModel> Operations { get; } = [];
-    [ObservableProperty, NotifyPropertyChangedFor(nameof(Status), nameof(IsFailure), nameof(Time), nameof(Chain), nameof(Decoded))]
+    [ObservableProperty, NotifyPropertyChangedFor(nameof(Status), nameof(IsSuccess), nameof(IsFailure), nameof(Time), nameof(Chain), nameof(Decoded))]
     private RecognitionPreview? _result;
 
-    public string Status => Result?.Status switch
-    {
-        null => "Не обработан",
-        ResultStatus.Success => "Считан",
-        ResultStatus.Failed => "Не считан",
-        ResultStatus.Timeout => "Таймаут",
-        _ => throw new InvalidOperationException()
-    };
-    public bool IsFailure => Result is not { Status: ResultStatus.Success };
+    public string Status => RecognitionChoices.StatusName(Result?.Status);
+    public bool IsSuccess => Result is { Status: ResultStatus.Success };
+    public bool IsFailure => Result?.Status is ResultStatus.Failed or ResultStatus.Timeout or ResultStatus.Mismatch;
     public string Time => Result is null ? "—" : $"{Result.Milliseconds:N1} мс";
-    public string Chain => Result is null ? "Ожидает распознавания" : string.Join(" → ", Operations.Select(o => o.Name));
-    public string Decoded => Result is { Status: ResultStatus.Success } ? Content : "—";
+    public string Chain => Operations.Count == 0 ? Presentation.Mutations.MutationChoices.Original.Name : string.Join(" → ", Operations.Select(o => o.Name));
+    public string Decoded => Result?.DecodedContent ?? "—";
 }

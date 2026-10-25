@@ -86,14 +86,14 @@ public sealed class GenerationTests : IDisposable
             Template = "SET-{num}", FirstNumber = 12, Count = 1, Width = 512, Height = 384, Version = 3
         }));
         var frames = TestApplicationFactory.CreateMutations().Apply(original.Image,
-            [new GaussianBlurOptions { Sigma = 2 }, new InkMutationOptions(), new PerspectiveMutationOptions()]);
+            [new GaussianBlurOptions { Sigma = 2 }, new SaltAndPepperOptions(), new PerspectiveMutationOptions()]);
         var sample = original with { Frames = frames };
         var folder = Path.Combine(_root, "Мой набор");
         var storage = TestApplicationFactory.CreateStorage();
         storage.Save([sample], new(folder));
         Assert.Equal(original.Image.Data.ToArray(), File.ReadAllBytes(Path.Combine(folder, "sample-0001.png")));
         Assert.Equal(frames[0].Image.Data.ToArray(), File.ReadAllBytes(Path.Combine(folder, "sample-0001-frame-0001.png")));
-        Assert.Equal(2, Directory.GetFiles(folder, "*.png").Length);
+        Assert.Equal(4, Directory.GetFiles(folder, "*.png").Length);
         var loaded = Assert.Single(storage.Load(folder).Samples);
         Assert.Equal(sample.Settings, loaded.Settings);
         Assert.Equal(sample.Image.Data.ToArray(), loaded.Image.Data.ToArray());
@@ -103,7 +103,7 @@ public sealed class GenerationTests : IDisposable
             Assert.Equal(frames[i].Options, loaded.Frames[i].Options);
             Assert.Equal(frames[i].Image.Data.ToArray(), loaded.Frames[i].Image.Data.ToArray());
         }
-        Assert.Same(loaded.Frames[0].Image, loaded.Frames[1].Image);
+        Assert.NotSame(loaded.Frames[0].Image, loaded.Frames[1].Image);
         var vm = TestApplicationFactory.CreateMainWindow();
         vm.Generation.LoadDirectory = folder;
         vm.Generation.LoadFolderCommand.Execute(null);
@@ -111,7 +111,7 @@ public sealed class GenerationTests : IDisposable
         Assert.Equal(3, vm.Generation.QrVersion);
         Assert.Equal(512, vm.Generation.ImageWidth);
         Assert.Equal("SET-0012", vm.Workspace.SelectedSample!.Content);
-        Assert.Equal(frames[0].Image.Data.ToArray(), vm.Workspace.SelectedSample.Image.Data.ToArray());
+        Assert.Equal(frames[^1].Image.Data.ToArray(), vm.Workspace.SelectedSample.Image.Data.ToArray());
         Assert.Equal(3, vm.Mutations.Operations.Count);
         var renamed = Path.Combine(_root, "Другое имя");
         Directory.Move(folder, renamed);

@@ -42,13 +42,4 @@ public sealed class WorkspaceTests
         Assert.All(vm.Workspace.Samples.Where(s => s != vm.Workspace.SelectedSample), s => Assert.Single(s.Operations));
     }
 
-    [Fact]
-    public void ReadingComputesDemoStatisticsAndCombinesFilters()
-    {
-        var vm = TestApplicationFactory.CreateMainWindow(); vm.Reading.RunCommand.Execute(null);
-        Assert.Equal(120, vm.Reading.ResultsChecked); Assert.Equal(96, vm.Reading.ResultsSuccess); Assert.Equal(16, vm.Reading.ResultsFailed);
-        vm.Reading.Filter = "Ошибки"; Assert.Equal(24, vm.Reading.Results.Count);
-        vm.Reading.Search = "0042"; Assert.Equal("QR-0042", Assert.Single(vm.Reading.Results).Name);
-        vm.Reading.Filter = "Успешные"; Assert.Empty(vm.Reading.Results);
-    }
 }

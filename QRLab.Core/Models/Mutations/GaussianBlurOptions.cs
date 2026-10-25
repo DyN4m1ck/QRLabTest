@@ -8,7 +8,7 @@ public sealed record GaussianBlurOptions : MutationOptions
 
     public override void Validate()
     {
-        if (!double.IsFinite(Sigma) || MutationDefaults.MinimumSigma < 0 || Sigma > MutationDefaults.MaximumSigma)
+        if (!double.IsFinite(Sigma) || Sigma < MutationDefaults.MinimumSigma || Sigma > MutationDefaults.MaximumSigma)
             throw new ArgumentException($"Сила размытия должна быть от 0 до {MutationDefaults.MaximumSigma}.");
     }
 }

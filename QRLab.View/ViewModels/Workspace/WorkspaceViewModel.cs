@@ -28,6 +28,19 @@ public sealed partial class WorkspaceViewModel : ObservableObject
     [ObservableProperty] private string _error = "";
     public bool HasError => !string.IsNullOrEmpty(Error);
     public string Position => $"{(SelectedSample is null ? 0 : Samples.IndexOf(SelectedSample) + 1)} / {Samples.Count}";
+    public int SampleCount => Samples.Count;
+    public decimal SampleNumberMaximum => Math.Max(1, Samples.Count);
+    public decimal? SampleNumber
+    {
+        get => SelectedSample is null ? null : Samples.IndexOf(SelectedSample) + 1;
+        set
+        {
+            if (value is null || value != decimal.Truncate(value.Value) || value < 1 || value > Samples.Count) return;
+            SelectedSample = Samples[(int)value.Value - 1];
+        }
+    }
+    public bool CanMovePrevious => SelectedSample is not null && Samples.IndexOf(SelectedSample) > 0;
+    public bool CanMoveNext => SelectedSample is not null && Samples.IndexOf(SelectedSample) < Samples.Count - 1;
     public IReadOnlyList<LibrarySet> LibrarySets => GenerationPresets.Library;
 
     public WorkspaceViewModel(ICodeGenerator generator, ISampleSetStorage storage, IMutationProcessor mutations, ICodeRecognizer recognizer)
@@ -37,12 +50,17 @@ public sealed partial class WorkspaceViewModel : ObservableObject
         _mutations = mutations;
         _recognizer = recognizer;
         Generate(new QrGenerationOptions());
-        Recognize();
         Notice = $"Подготовлено {Samples.Count} образцов";
     }
 
     partial void OnErrorChanged(string value) => OnPropertyChanged(nameof(HasError));
-    partial void OnSelectedSampleChanged(SampleViewModel? value) => OnPropertyChanged(nameof(Position));
+    partial void OnSelectedSampleChanged(SampleViewModel? value)
+    {
+        OnPropertyChanged(nameof(Position));
+        OnPropertyChanged(nameof(SampleNumber));
+        PreviousCommand.NotifyCanExecuteChanged();
+        NextCommand.NotifyCanExecuteChanged();
+    }
 
     public bool Generate(GenerationOptions options)
     {
@@ -64,6 +82,8 @@ public sealed partial class WorkspaceViewModel : ObservableObject
         foreach (var sample in models) Samples.Add(sample);
         SelectedSample = Samples.FirstOrDefault();
         OnPropertyChanged(nameof(Position));
+        OnPropertyChanged(nameof(SampleCount));
+        OnPropertyChanged(nameof(SampleNumberMaximum));
     }
 
     public void ShowError(string message) { Error = message; Notice = message; }
@@ -100,16 +120,26 @@ public sealed partial class WorkspaceViewModel : ObservableObject
         { ShowError(exception.Message); return null; }
     }
 
-    public void Recognize(RecognitionOptions? options = null)
+    public async Task RecognizeAsync(RecognitionOptions options, CancellationToken cancellationToken = default)
     {
-        var previews = Samples.Select(s => s.Preview).ToArray();
-        foreach (var result in _recognizer.Recognize(previews, options ?? new RecognitionOptions()))
-            Samples.First(s => s.Preview.Number == result.Number).Result = result;
-        Notice = "Интерактивный макет • демонстрационные данные";
+        var snapshot = Samples.Select(sample => (Model: sample, Image: sample.Image, Preview: sample.Preview)).ToArray();
+        try
+        {
+            var results = await _recognizer.RecognizeAsync(snapshot.Select(item => item.Preview).ToArray(), options, cancellationToken);
+            foreach (var result in results)
+            {
+                var item = snapshot.First(item => item.Preview.Number == result.Number);
+                if (Samples.Contains(item.Model) && ReferenceEquals(item.Model.Image, item.Image)) item.Model.Result = result;
+            }
+            Error = "";
+            Notice = $"Обработано {results.Count} образцов";
+        }
+        catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+        { Notice = "Распознавание отменено."; }
     }
 
-    [RelayCommand] private void Previous() => Move(-1);
-    [RelayCommand] private void Next() => Move(1);
+    [RelayCommand(CanExecute = nameof(CanMovePrevious))] private void Previous() => Move(-1);
+    [RelayCommand(CanExecute = nameof(CanMoveNext))] private void Next() => Move(1);
     private void Move(int delta)
     {
         if (Samples.Count > 0)

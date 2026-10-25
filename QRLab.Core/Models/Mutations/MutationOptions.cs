@@ -4,7 +4,7 @@ namespace QRLab.Core.Models.Mutations;
 
 [JsonPolymorphic(TypeDiscriminatorPropertyName = "$mutation")]
 [JsonDerivedType(typeof(GaussianBlurOptions), "gaussian")]
-[JsonDerivedType(typeof(InkMutationOptions), "ink")]
+[JsonDerivedType(typeof(SaltAndPepperOptions), "salt-and-pepper")]
 [JsonDerivedType(typeof(PerspectiveMutationOptions), "perspective")]
 public abstract record MutationOptions
 {
