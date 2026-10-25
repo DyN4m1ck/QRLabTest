@@ -14,15 +14,31 @@ namespace QRLab.Test;
 
 public sealed class RecognitionTests
 {
+    [Fact]
+    public async Task ReadsUnmodifiedDefaultBatch()
+    {
+        var vm = TestApplicationFactory.CreateMainWindow();
+        await vm.Reading.RunCommand.ExecuteAsync(null);
+        Assert.All(vm.Workspace.Samples, sample =>
+        {
+            Assert.True(sample.IsSuccess, $"{sample.Name}: {sample.Status}, {sample.Result?.Error}");
+            Assert.Equal(sample.Content, sample.Result!.DecodedContent);
+        });
+    }
+
     [Theory]
-    [InlineData(CodeKind.QrCode, BarcodeType.Code128, "Привет, ZXing")]
-    [InlineData(CodeKind.Barcode, BarcodeType.Ean13, "590123412345")]
-    [InlineData(CodeKind.Barcode, BarcodeType.Code128, "LAB-012345")]
-    [InlineData(CodeKind.Barcode, BarcodeType.Pdf417, "PDF417 текст")]
-    public async Task ReadsActualPngForEachSupportedCode(CodeKind kind, BarcodeType type, string content)
+    [InlineData(CodeKind.QrCode, BarcodeType.Code128, "Привет, ZXing", 360, 360)]
+    [InlineData(CodeKind.Barcode, BarcodeType.Ean13, "590123412345", 360, 360)]
+    [InlineData(CodeKind.Barcode, BarcodeType.Code128, "LAB-012345", 360, 360)]
+    [InlineData(CodeKind.Barcode, BarcodeType.Pdf417, "PDF417 текст", 360, 360)]
+    [InlineData(CodeKind.QrCode, BarcodeType.Code128, "Привет, ZXing", 768, 512)]
+    [InlineData(CodeKind.Barcode, BarcodeType.Ean13, "590123412345", 768, 512)]
+    [InlineData(CodeKind.Barcode, BarcodeType.Code128, "LAB-012345", 768, 512)]
+    [InlineData(CodeKind.Barcode, BarcodeType.Pdf417, "PDF417 текст", 768, 512)]
+    public async Task ReadsActualPngForEachSupportedCode(CodeKind kind, BarcodeType type, string content, int width, int height)
     {
         GenerationOptions settings = kind == CodeKind.QrCode ? new QrGenerationOptions() : BarcodeGenerationOptions.Create(type);
-        var sample = Assert.Single(new CodeGenerator().CreateSamples(settings with { Template = content, Count = 1, Width = 768, Height = 512 }));
+        var sample = Assert.Single(new CodeGenerator().CreateSamples(settings with { Template = content, Count = 1, Width = width, Height = height }));
         var result = Assert.Single(await new ZxingCodeRecognizer().RecognizeAsync([sample], new(10000), TestContext.Current.CancellationToken));
         Assert.Equal(Status.Success, result.Status);
         Assert.Equal(sample.Content, result.DecodedContent);
