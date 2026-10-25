@@ -11,6 +11,7 @@ public sealed class GaussianBlurMutation : ImageMutation<GaussianBlurOptions>
     protected override RasterImage Apply(RasterImage source, GaussianBlurOptions options)
     {
         if (options.Sigma == 0) return source;
+        
         using var image = SKImage.FromEncodedData(source.Data.Span)
             ?? throw new ArgumentException("Не удалось прочитать исходное изображение.");
         using var surface = SKSurface.Create(new SKImageInfo(source.Width, source.Height, SKColorType.Bgra8888, SKAlphaType.Opaque));

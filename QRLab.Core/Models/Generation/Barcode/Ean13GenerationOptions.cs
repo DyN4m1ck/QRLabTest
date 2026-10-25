@@ -1,3 +1,5 @@
+using QRLab.Core.Models.Generation.Barcode;
+
 namespace QRLab.Core.Models.Generation;
 
 public sealed record Ean13GenerationOptions : LinearBarcodeGenerationOptions

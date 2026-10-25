@@ -41,7 +41,11 @@
           </Border>
           <ScrollViewer Grid.Row="1">
             <StackPanel Margin="14" Spacing="5">
-              <ListBox Classes="tabs" ItemsSource="{Binding Modes}" SelectedValue="{Binding Mode, Mode=TwoWay}" SelectedValueBinding="{Binding Value, DataType=presentation:EnumOption}" ItemTemplate="{StaticResource GenerationChoiceTemplate}">
+              <ListBox Classes="tabs" 
+                       ItemsSource="{Binding Modes}" 
+                       SelectedValue="{Binding Mode, Mode=TwoWay}" 
+                       SelectedValueBinding="{Binding Value, DataType=presentation:EnumOption}" 
+                       ItemTemplate="{StaticResource GenerationChoiceTemplate}">
                 <ListBox.ItemsPanel>
                   <ItemsPanelTemplate>
                     <StackPanel Orientation="Horizontal"/>
@@ -49,7 +53,9 @@
                 </ListBox.ItemsPanel>
               </ListBox>
               <TextBlock Text="Тип кода" Classes="label"/>
-              <ListBox Classes="tabs iconTabs" ItemsSource="{Binding Formats}" SelectedValue="{Binding Format, Mode=TwoWay}" SelectedValueBinding="{Binding Value, DataType=presentation:EnumOption}">
+              <ListBox Classes="tabs iconTabs" ItemsSource="{Binding Formats}"
+                       SelectedValue="{Binding Format, Mode=TwoWay}" 
+                       SelectedValueBinding="{Binding Value, DataType=presentation:EnumOption}">
                 <ListBox.ItemsPanel>
                   <ItemsPanelTemplate>
                     <StackPanel Orientation="Horizontal"/>

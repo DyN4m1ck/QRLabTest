@@ -5,7 +5,7 @@ using QRLab.Core.Models.Generation.Barcode;
 using QRLab.Core.Models.Generation.Qrcode;
 using QRLab.Core.Models.Storage;
 using QRLab.View.Presentation;
-using BarcodeSymbology = QRLab.Core.Models.Generation.BarcodeType;
+using BarcodeSymbology = QRLab.Core.Models.Generation.Barcode.BarcodeType;
 
 namespace QRLab.View.ViewModels;
 

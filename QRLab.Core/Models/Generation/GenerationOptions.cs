@@ -26,14 +26,18 @@ public abstract record GenerationOptions
     public virtual void Validate()
     {
         if (string.IsNullOrWhiteSpace(Template)) throw new ArgumentException("Введите содержимое или шаблон кода.");
+        
         if (Count < GenerationLimits.MinimumCount || Count > GenerationLimits.MaximumCount
             || FirstNumber < GenerationDefaults.FirstNumber || (long)FirstNumber + Count - 1 > int.MaxValue)
             throw new ArgumentException($"Количество должно быть от {GenerationLimits.MinimumCount} до {GenerationLimits.MaximumCount}, первый номер — положительным.");
+       
         if (Width < GenerationLimits.MinimumImageSize || Width > GenerationLimits.MaximumImageSize
             || Height < GenerationLimits.MinimumImageSize || Height > GenerationLimits.MaximumImageSize)
             throw new ArgumentException($"Размер изображения должен быть от {GenerationLimits.MinimumImageSize} до {GenerationLimits.MaximumImageSize} пикселей.");
-        if (QuietZone < GenerationLimits.MinimumQuietZone || QuietZone > GenerationLimits.MaximumQuietZone)
+        
+        if (QuietZone is < GenerationLimits.MinimumQuietZone or > GenerationLimits.MaximumQuietZone)
             throw new ArgumentException($"Тихая зона должна быть от {GenerationLimits.MinimumQuietZone} до {GenerationLimits.MaximumQuietZone} модулей.");
+        
         if (!Enum.IsDefined(Source)) throw new ArgumentException("Неизвестный источник содержимого.");
     }
 

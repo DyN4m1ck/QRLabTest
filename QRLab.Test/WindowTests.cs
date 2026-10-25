@@ -10,7 +10,7 @@ using Avalonia.Media;
 using QRLab.View.Controls;
 using Avalonia.Threading;
 using Avalonia.VisualTree;
-
+using QRLab.Core.Models.Generation.Barcode;
 using QRLab.View;
 using QRLab.View.ViewModels;
 using QRLab.View.Views;

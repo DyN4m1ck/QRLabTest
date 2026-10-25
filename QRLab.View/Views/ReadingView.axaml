@@ -99,12 +99,12 @@
                 <TextBlock Text="Сводка распознавания" Classes="heading"/>
                 <Grid ColumnDefinitions="*,Auto">
                   <TextBlock Text="Код не найден" Classes="muted"/>
-                  <TextBlock Grid.Column="1" Text="{Binding ResultsTimeout}" Classes="danger"/>
+                  <TextBlock Grid.Column="1" Text="{Binding ResultsFailed}" Classes="danger"/>
                 </Grid>
                 <ProgressBar Maximum="{Binding Workspace.Samples.Count}" Value="{Binding ResultsFailed}" Foreground="#E58A86" Height="4"/>
                 <Grid ColumnDefinitions="*,Auto">
                   <TextBlock Text="Тайм-аут" Classes="muted"/>
-                  <TextBlock Grid.Column="1" Text="{Binding ResultsFailed}" Classes="danger"/>
+                  <TextBlock Grid.Column="1" Text="{Binding ResultsTimeout}" Classes="danger"/>
                 </Grid>
                 <ProgressBar Maximum="{Binding Workspace.Samples.Count}" Value="{Binding ResultsTimeout}" Foreground="#E58A86" Height="4"/>
                 <Grid ColumnDefinitions="*,Auto">

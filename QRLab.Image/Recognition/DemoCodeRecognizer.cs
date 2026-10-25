@@ -4,7 +4,9 @@ using QRLab.Core.Models.Samples;
 
 namespace QRLab.Image.Recognition;
 
-/// <summary>Recognition remains a demo until the decoding stage is implemented.</summary>
+/// <summary>
+/// Recognition remains a demo until the decoding stage is implemented.
+/// </summary>
 public sealed class DemoCodeRecognizer : ICodeRecognizer
 {
     public IReadOnlyList<RecognitionPreview> Recognize(IReadOnlyList<SamplePreview> samples, RecognitionOptions options) =>
