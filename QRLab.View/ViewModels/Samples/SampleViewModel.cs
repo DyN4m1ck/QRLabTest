@@ -7,9 +7,10 @@ using QRLab.Core.Models.Recognition;
 using QRLab.Core.Models.Samples;
 using QRLab.View.Presentation;
 using QRLab.View.Presentation.Recognition;
+using QRLab.View.ViewModels.Mutations;
 using ResultStatus = QRLab.Core.Models.Recognition.Status;
 
-namespace QRLab.View.ViewModels;
+namespace QRLab.View.ViewModels.Samples;
 
 public sealed partial class SampleViewModel : ObservableObject
 {

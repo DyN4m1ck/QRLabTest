@@ -1,6 +1,18 @@
-<Window xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:vm="using:QRLab.View.ViewModels" xmlns:views="using:QRLab.View.Views" xmlns:icons="using:QRLab.View.Controls" x:Class="QRLab.View.Views.MainWindow" x:DataType="vm:MainWindowViewModel" Title="QRLab — лаборатория устойчивости кодов" Width="1440" Height="940" MinWidth="1180" MinHeight="760" WindowDecorations="None" CanResize="True">
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:QRLab.View.ViewModels"
+        xmlns:views="using:QRLab.View.Views"
+        xmlns:icons="using:QRLab.View.Controls"
+        xmlns:generation="clr-namespace:QRLab.View.ViewModels.Generation"
+        x:Class="QRLab.View.Views.MainWindow"
+        x:DataType="vm:MainWindowViewModel" 
+        Title="QRLab — лаборатория устойчивости кодов" 
+        Width="1440" Height="940" 
+        MinWidth="1180" MinHeight="760" 
+        WindowDecorations="None" 
+        CanResize="True">
   <Window.DataTemplates>
-    <DataTemplate DataType="{x:Type vm:GenerationViewModel}">
+    <DataTemplate DataType="{x:Type generation:GenerationViewModel}">
       <views:GenerationView/>
     </DataTemplate>
     <DataTemplate DataType="{x:Type vm:MutationsViewModel}">

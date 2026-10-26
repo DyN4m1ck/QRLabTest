@@ -1,6 +1,12 @@
-<UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:vm="using:QRLab.View.ViewModels" xmlns:c="using:QRLab.View.Controls"
-             xmlns:p="using:QRLab.View.Presentation" x:Class="QRLab.View.Views.MutationsView" x:DataType="vm:MutationsViewModel">
+<UserControl xmlns="https://github.com/avaloniaui" 
+              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" 
+              xmlns:vm="using:QRLab.View.ViewModels"
+              xmlns:c="using:QRLab.View.Controls"
+              xmlns:p="using:QRLab.View.Presentation"
+              xmlns:icons="using:QRLab.View.Controls"
+              xmlns:mutations="clr-namespace:QRLab.View.ViewModels.Mutations"
+              x:Class="QRLab.View.Views.MutationsView"
+              x:DataType="vm:MutationsViewModel">
   <UserControl.Resources>
     <DataTemplate x:Key="MutationChoiceTemplate" x:DataType="p:EnumOption"><TextBlock Text="{Binding Name}"/></DataTemplate>
   </UserControl.Resources>
@@ -40,26 +46,27 @@
       </Border>
       <Grid Grid.Column="1" RowDefinitions="*,170" RowSpacing="12">
         <Border Classes="card">
-          <Grid RowDefinitions="Auto,*,42">
-            <Border Classes="panelHead">
-              <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="8">
-                <TextBlock Text="{Binding Workspace.SelectedSample.Name}" Classes="accent"/>
-                <TextBlock Grid.Column="1" Text="{Binding SelectedFrame.Name}" Classes="muted" TextTrimming="CharacterEllipsis"/>
-                <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="5">
-                  <Button Content="‹" Command="{Binding Workspace.PreviousCommand}" ToolTip.Tip="Предыдущий образец"/>
-                  <NumericUpDown x:Name="SampleNumberInput" Value="{Binding Workspace.SampleNumber, Mode=TwoWay}"
-                      Minimum="1" Maximum="{Binding Workspace.SampleNumberMaximum}" FormatString="0" Width="78"/>
-                  <TextBlock Text="/" Classes="muted"/><TextBlock Text="{Binding Workspace.SampleCount}" Classes="muted"/>
-                  <Button Content="›" Command="{Binding Workspace.NextCommand}" ToolTip.Tip="Следующий образец"/>
-                </StackPanel>
-              </Grid>
-            </Border>
-            <Border Grid.Row="1" Background="#0D1112" Padding="30">
+          <Grid RowDefinitions="*,40,52">
+            <Border Grid.Row="0" Background="#0D1112" Padding="30">
               <c:RasterPreview x:Name="MutationPreview" Image="{Binding PreviewImage}" AllowZoom="True"/>
             </Border>
-            <Grid Grid.Row="2" ColumnDefinitions="*,Auto" Margin="14,0">
+            <Grid Grid.Row="1" ColumnDefinitions="*,Auto" Margin="14,0">
               <TextBlock Text="ЛКМ — перемещение  •  Колесо — масштаб" Classes="muted" FontSize="10"/>
               <Button x:Name="ResetMutationViewport" Grid.Column="1" Content="Сбросить вид" Classes="flat" Command="{Binding #MutationPreview.ResetViewCommand}"/>
+            </Grid>
+            <Grid Grid.Row="2" ColumnDefinitions="*,Auto,Auto,Auto" Margin="14,0">
+              <TextBlock Text="{Binding Workspace.SelectedSample.Name}" Classes="mono"/>
+              <Button Grid.Column="1" Classes="flat" Command="{Binding Workspace.PreviousCommand}" ToolTip.Tip="Предыдущий образец">
+                <StackPanel Orientation="Horizontal" Spacing="7">
+                  <icons:SvgIcon Source="arrow-right" Width="12" Height="12" RenderTransform="rotate(180deg)" RenderTransformOrigin="50%,50%"/>
+                </StackPanel>
+              </Button>
+              <TextBlock Grid.Column="2" Text="{Binding Workspace.Position}" Classes="muted" Margin="10,0"/>
+              <Button Grid.Column="3" Classes="flat" Command="{Binding Workspace.NextCommand}" ToolTip.Tip="Следующий образец">
+                <StackPanel Orientation="Horizontal" Spacing="7">
+                  <icons:SvgIcon Source="arrow-right" Width="12" Height="12"/>
+                </StackPanel>
+              </Button>
             </Grid>
           </Grid>
         </Border>
@@ -69,7 +76,7 @@
             <ListBox Grid.Row="1" ItemsSource="{Binding Frames}" SelectedItem="{Binding SelectedFrame, Mode=TwoWay}">
               <ListBox.ItemsPanel><ItemsPanelTemplate><StackPanel Orientation="Horizontal"/></ItemsPanelTemplate></ListBox.ItemsPanel>
               <ListBox.ItemTemplate>
-                <DataTemplate x:DataType="vm:OperationViewModel">
+                <DataTemplate x:DataType="mutations:OperationViewModel">
                   <StackPanel Width="105" Spacing="6">
                     <c:RasterPreview Height="70" Image="{Binding Image}"/>
                     <TextBlock Text="{Binding Name}" FontSize="10" TextTrimming="CharacterEllipsis"/>
@@ -86,7 +93,7 @@
           <Border Classes="panelHead"><TextBlock Text="Последовательность операций" Classes="heading"/></Border>
           <ListBox Grid.Row="1" ItemsSource="{Binding Operations}" SelectedItem="{Binding SelectedOperation, Mode=TwoWay}">
             <ListBox.ItemTemplate>
-              <DataTemplate x:DataType="vm:OperationViewModel">
+              <DataTemplate x:DataType="mutations:OperationViewModel">
                 <Grid ColumnDefinitions="24,*">
                   <TextBlock Text="{Binding Number}" Classes="accent" FontSize="10"/>
                   <StackPanel Grid.Column="1" Spacing="4">
@@ -102,36 +109,47 @@
               <TextBlock Text="Параметры операции" Classes="heading"/>
               <StackPanel IsVisible="{Binding IsPerspective}" Spacing="5">
                 <TextBlock Text="Наклон по X, °" Classes="label"/>
-                <Slider Minimum="-60" Maximum="60" Value="{Binding AngleX, Mode=TwoWay}"/>
-                <TextBlock Text="{Binding AngleX, StringFormat={}{0:N1}°}" Classes="muted"/>
+                <Grid ColumnDefinitions="*,90" ColumnSpacing="8">
+                  <Slider x:Name="AngleXSlider" Minimum="-60" Maximum="60" Value="{Binding AngleX, Mode=TwoWay}"/>
+                  <NumericUpDown Grid.Column="1" Value="{Binding AngleX, Mode=TwoWay}" Minimum="{Binding #AngleXSlider.Minimum}" Maximum="{Binding #AngleXSlider.Maximum}" Increment="0.1" FormatString="0.0"/>
+                </Grid>
                 <TextBlock Text="Наклон по Y, °" Classes="label"/>
-                <Slider Minimum="-60" Maximum="60" Value="{Binding AngleY, Mode=TwoWay}"/>
-                <TextBlock Text="{Binding AngleY, StringFormat={}{0:N1}°}" Classes="muted"/>
+                <Grid ColumnDefinitions="*,90" ColumnSpacing="8">
+                  <Slider x:Name="AngleYSlider" Minimum="-60" Maximum="60" Value="{Binding AngleY, Mode=TwoWay}"/>
+                  <NumericUpDown Grid.Column="1" Value="{Binding AngleY, Mode=TwoWay}" Minimum="{Binding #AngleYSlider.Minimum}" Maximum="{Binding #AngleYSlider.Maximum}" Increment="0.1" FormatString="0.0"/>
+                </Grid>
                 <TextBlock Text="Дистанция проекции" Classes="label"/>
-                <Slider Minimum="1" Maximum="10" Value="{Binding Distance, Mode=TwoWay}"/>
-                <TextBlock Text="{Binding Distance, StringFormat={}{0:N1}}" Classes="muted"/>
+                <Grid ColumnDefinitions="*,90" ColumnSpacing="8">
+                  <Slider x:Name="DistanceSlider" Minimum="1" Maximum="10" Value="{Binding Distance, Mode=TwoWay}"/>
+                  <NumericUpDown Grid.Column="1" Value="{Binding Distance, Mode=TwoWay}" Minimum="{Binding #DistanceSlider.Minimum}" Maximum="{Binding #DistanceSlider.Maximum}" Increment="0.1" FormatString="0.0"/>
+                </Grid>
                 <TextBlock Text="Интерполяция" Classes="label"/>
                 <ComboBox ItemsSource="{Binding Interpolations}" ItemTemplate="{StaticResource MutationChoiceTemplate}"
                     SelectedValue="{Binding Interpolation, Mode=TwoWay}" SelectedValueBinding="{Binding Value, DataType=p:EnumOption}"/>
               </StackPanel>
-              <StackPanel IsVisible="{Binding IsBlur}" Spacing="5">
-                <TextBlock Text="Сила размытия, σ" Classes="label"/>
-                <Slider Minimum="0" Maximum="50" Value="{Binding Blur, Mode=TwoWay}"/>
-                <TextBlock Text="{Binding Blur, StringFormat={}{0:N1} px}" Classes="muted"/>
+              <StackPanel IsVisible="{Binding IsBlur}" Spacing="1">
+                <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
+                  <TextBlock Text="Сила размытия, σ" Classes="label"/>
+                  <NumericUpDown Grid.Column="1" Value="{Binding Blur, Mode=TwoWay}" Minimum="{Binding #BlurSlider.Minimum}" Maximum="{Binding #BlurSlider.Maximum}" Increment="0.1" FormatString="0.0"/>
+                </Grid>
+                <Slider x:Name="BlurSlider" Minimum="0" Maximum="50" Value="{Binding Blur, Mode=TwoWay}"/>
               </StackPanel>
               <StackPanel IsVisible="{Binding IsSaltAndPepper}" Spacing="5">
                 <TextBlock Text="Плотность шума, %" Classes="label"/>
-                <Slider Minimum="0" Maximum="100" Value="{Binding NoiseDensity, Mode=TwoWay}"/>
-                <TextBlock Text="{Binding NoiseDensity, StringFormat={}{0:N1}%}" Classes="muted"/>
+                <Grid ColumnDefinitions="*,90" ColumnSpacing="8">
+                  <Slider x:Name="NoiseDensitySlider" Minimum="0" Maximum="100" Value="{Binding NoiseDensity, Mode=TwoWay}"/>
+                  <NumericUpDown Grid.Column="1" Value="{Binding NoiseDensity, Mode=TwoWay}" Minimum="{Binding #NoiseDensitySlider.Minimum}" Maximum="{Binding #NoiseDensitySlider.Maximum}" Increment="0.1" FormatString="0.0"/>
+                </Grid>
                 <TextBlock Text="Доля белых точек, %" Classes="label"/>
-                <Slider Minimum="0" Maximum="100" Value="{Binding SaltPercent, Mode=TwoWay}"/>
-                <TextBlock Text="{Binding SaltPercent, StringFormat={}{0:N1}%}" Classes="muted"/>
+                <Grid ColumnDefinitions="*,90" ColumnSpacing="8">
+                  <Slider x:Name="SaltPercentSlider" Minimum="0" Maximum="100" Value="{Binding SaltPercent, Mode=TwoWay}"/>
+                  <NumericUpDown Grid.Column="1" Value="{Binding SaltPercent, Mode=TwoWay}" Minimum="{Binding #SaltPercentSlider.Minimum}" Maximum="{Binding #SaltPercentSlider.Maximum}" Increment="0.1" FormatString="0.0"/>
+                </Grid>
                 <TextBlock Text="Seed" Classes="label"/>
                 <NumericUpDown Value="{Binding Seed, Mode=TwoWay}" Minimum="0" Maximum="2147483647" FormatString="0"/>
                 <Button Content="Новый seed" Command="{Binding RandomizeCommand}"/>
               </StackPanel>
               <Border Classes="divider"/>
-              <TextBlock Text="Исходник защищён" Classes="accent" FontSize="11"/>
               <Button Content="Сбросить цепочку" Command="{Binding ResetCommand}" HorizontalAlignment="Stretch"/>
               <Button Content="К распознаванию" Command="{ReflectionBinding $parent[Window].DataContext.NavigateCommand}" CommandParameter="03" HorizontalAlignment="Stretch"/>
             </StackPanel>

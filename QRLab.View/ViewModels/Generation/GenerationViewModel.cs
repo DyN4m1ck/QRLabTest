@@ -3,21 +3,23 @@ using CommunityToolkit.Mvvm.Input;
 using QRLab.Core.Models.Generation;
 using QRLab.Core.Models.Generation.Barcode;
 using QRLab.Core.Models.Generation.Qrcode;
-using QRLab.Core.Models.Storage;
 using QRLab.View.Presentation;
 using BarcodeSymbology = QRLab.Core.Models.Generation.Barcode.BarcodeType;
 
-namespace QRLab.View.ViewModels;
 
-public sealed partial class GenerationViewModel(WorkspaceViewModel workspace)
+namespace QRLab.View.ViewModels.Generation;
+
+public sealed partial class GenerationViewModel(Workspace.WorkspaceViewModel workspace)
     : ScreenViewModel("01", "Генерация кодов", "Создание кодов и управление наборами")
 {
-    public WorkspaceViewModel Workspace { get; } = workspace;
+    public Workspace.WorkspaceViewModel Workspace { get; } = workspace;
+    
     public IReadOnlyList<EnumOption<GenerationMode>> Modes => GenerationChoices.Modes;
     public IReadOnlyList<EnumOption<CodeKind>> Formats => GenerationChoices.Formats;
     public IReadOnlyList<EnumOption<QrCorrectionLevel>> Corrections => GenerationChoices.Corrections;
     public IReadOnlyList<EnumOption<ContentSource>> Sources => GenerationChoices.Sources;
     public IReadOnlyList<EnumOption<BarcodeSymbology>> BarcodeTypes => GenerationChoices.BarcodeTypes;
+    
     public GenerationInputLimits Limits { get; } = new();
 
     [ObservableProperty] private GenerationMode _mode = GenerationDefaults.Mode;

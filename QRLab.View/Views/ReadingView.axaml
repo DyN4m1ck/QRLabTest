@@ -1,4 +1,13 @@
-<UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:vm="using:QRLab.View.ViewModels" xmlns:c="using:QRLab.View.Controls" xmlns:icons="using:QRLab.View.Controls" xmlns:p="using:QRLab.View.Presentation" xmlns:r="clr-namespace:QRLab.Core.Models.Recognition;assembly=QRLab.Core" x:Class="QRLab.View.Views.ReadingView" x:DataType="vm:ReadingViewModel">
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:QRLab.View.ViewModels"
+             xmlns:c="using:QRLab.View.Controls"
+             xmlns:icons="using:QRLab.View.Controls"
+             xmlns:p="using:QRLab.View.Presentation"
+             xmlns:r="clr-namespace:QRLab.Core.Models.Recognition;assembly=QRLab.Core"
+             xmlns:samples="clr-namespace:QRLab.View.ViewModels.Samples"
+             x:Class="QRLab.View.Views.ReadingView"
+             x:DataType="vm:ReadingViewModel">
   <UserControl.Resources>
     <DataTemplate x:Key="RecognitionChoiceTemplate" x:DataType="p:EnumOption"><TextBlock Text="{Binding Name}"/></DataTemplate>
   </UserControl.Resources>
@@ -56,7 +65,7 @@
           </Border>
           <ListBox Grid.Row="3" ItemsSource="{Binding Results}" SelectedItem="{Binding SelectedResult, Mode=TwoWay}">
             <ListBox.ItemTemplate>
-              <DataTemplate x:DataType="vm:SampleViewModel">
+              <DataTemplate x:DataType="samples:SampleViewModel">
                 <Grid ColumnDefinitions="105,100,*,165,85" MinHeight="28">
                   <TextBlock Text="{Binding Name}" Classes="mono" FontSize="11"/>
                   <Border Grid.Column="1" Background="#293E38" CornerRadius="3" Padding="6,4" HorizontalAlignment="Left">

@@ -13,9 +13,12 @@ namespace QRLab.View.Controls;
 public sealed class RasterPreview : Control
 {
     private const double DefaultZoom = 1;
+    
     public static readonly StyledProperty<RasterImage?> ImageProperty = AvaloniaProperty.Register<RasterPreview, RasterImage?>(nameof(Image));
     public static readonly StyledProperty<bool> AllowZoomProperty = AvaloniaProperty.Register<RasterPreview, bool>(nameof(AllowZoom));
+    
     public RasterImage? Image { get => GetValue(ImageProperty); set => SetValue(ImageProperty, value); }
+    
     public bool AllowZoom { get => GetValue(AllowZoomProperty); set => SetValue(AllowZoomProperty, value); }
     public ICommand ResetViewCommand { get; }
     public double Zoom => _zoom;

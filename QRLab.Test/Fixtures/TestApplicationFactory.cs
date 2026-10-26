@@ -4,6 +4,7 @@ using QRLab.Image.Recognition;
 using QRLab.Image.Recognition.Reports;
 using QRLab.Image.Storage;
 using QRLab.View.ViewModels;
+using QRLab.View.ViewModels.Workspace;
 
 namespace QRLab.Test.Fixtures;
 

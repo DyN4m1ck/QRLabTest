@@ -3,7 +3,7 @@ using QRLab.Core.Models.Mutations;
 using QRLab.View.Presentation;
 using QRLab.View.Presentation.Mutations;
 
-namespace QRLab.View.ViewModels;
+namespace QRLab.View.ViewModels.Mutations;
 
 public sealed record OperationViewModel(string Number, MutationOptions? Options, RasterImage Image)
 {

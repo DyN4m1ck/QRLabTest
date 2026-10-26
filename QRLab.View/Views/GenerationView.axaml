@@ -1,9 +1,15 @@
-<UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:vm="using:QRLab.View.ViewModels" xmlns:c="using:QRLab.View.Controls"
+<UserControl xmlns="https://github.com/avaloniaui" 
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" 
+             xmlns:vm="using:QRLab.View.ViewModels" 
+             xmlns:c="using:QRLab.View.Controls"
              xmlns:icons="using:QRLab.View.Controls"
              xmlns:images="clr-namespace:QRLab.Core.Models.Images;assembly=QRLab.Core"
              xmlns:generation="clr-namespace:QRLab.Core.Models.Generation;assembly=QRLab.Core"
              xmlns:presentation="using:QRLab.View.Presentation"
-             x:Class="QRLab.View.Views.GenerationView" x:DataType="vm:GenerationViewModel">
+             xmlns:samples="clr-namespace:QRLab.View.ViewModels.Samples"
+             xmlns:vm1="clr-namespace:QRLab.View.ViewModels.Generation"
+             x:Class="QRLab.View.Views.GenerationView"
+             x:DataType="vm1:GenerationViewModel">
   <UserControl.Resources>
     <DataTemplate x:Key="GenerationChoiceTemplate" x:DataType="presentation:EnumOption">
       <TextBlock Text="{Binding Name}"/>
@@ -138,18 +144,15 @@
       </Border>
       <Grid Grid.Column="1" RowDefinitions="*,170" RowSpacing="12">
         <Border Classes="card" ClipToBounds="True">
-          <Grid RowDefinitions="Auto,*,40,52">
-            <Border Classes="panelHead">
-              <TextBlock Text="Предпросмотр" Classes="heading"/>
-            </Border>
-            <Border Grid.Row="1" Background="#0D1112" Padding="30">
+          <Grid RowDefinitions="*,40,52">
+            <Border Grid.Row="0" Background="#0D1112" Padding="30">
               <c:RasterPreview x:Name="GenerationPreview" Image="{Binding Workspace.SelectedSample.Image}" AllowZoom="True"/>
             </Border>
-            <Grid Grid.Row="2" ColumnDefinitions="*,Auto" Margin="14,0">
+            <Grid Grid.Row="1" ColumnDefinitions="*,Auto" Margin="14,0">
               <TextBlock Text="ЛКМ — перемещение  •  Колесо — масштаб" Classes="muted" FontSize="10"/>
               <Button x:Name="ResetGenerationViewport" Grid.Column="1" Content="Сбросить вид" Classes="flat" Command="{Binding #GenerationPreview.ResetViewCommand}"/>
             </Grid>
-            <Grid Grid.Row="3" ColumnDefinitions="*,Auto,Auto,Auto" Margin="14,0">
+            <Grid Grid.Row="2" ColumnDefinitions="*,Auto,Auto,Auto" Margin="14,0">
               <TextBlock Text="{Binding Workspace.SelectedSample.Name}" Classes="mono"/>
               <Button Grid.Column="1" Classes="flat" Command="{Binding Workspace.PreviousCommand}" ToolTip.Tip="Предыдущий образец">
                 <StackPanel Orientation="Horizontal" Spacing="7">
@@ -196,7 +199,7 @@
           </StackPanel>
           <ListBox Grid.Row="2" ItemsSource="{Binding Workspace.Samples}" SelectedItem="{Binding Workspace.SelectedSample, Mode=TwoWay}">
             <ListBox.ItemTemplate>
-              <DataTemplate x:DataType="vm:SampleViewModel">
+              <DataTemplate x:DataType="samples:SampleViewModel">
                 <Grid ColumnDefinitions="34,*,Auto" ColumnSpacing="10">
                   <c:RasterPreview Image="{Binding Image}" Width="32" Height="32"/>
                   <StackPanel Spacing="3" Grid.Column="1">

@@ -1,19 +1,19 @@
 using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using QRLab.Core.Interfaces.Generation;
 using QRLab.Core.Interfaces.Mutations;
 using QRLab.Core.Interfaces.Recognition;
-using QRLab.Core.Models.Images;
-using QRLab.Core.Interfaces.Generation;
 using QRLab.Core.Interfaces.Storage;
 using QRLab.Core.Models.Generation;
 using QRLab.Core.Models.Generation.Qrcode;
+using QRLab.Core.Models.Images;
 using QRLab.Core.Models.Mutations;
 using QRLab.Core.Models.Recognition;
 using QRLab.Core.Models.Samples;
 using QRLab.Core.Models.Storage;
 
-namespace QRLab.View.ViewModels;
+namespace QRLab.View.ViewModels.Workspace;
 
 public sealed partial class WorkspaceViewModel : ObservableObject
 {
@@ -21,11 +21,14 @@ public sealed partial class WorkspaceViewModel : ObservableObject
     private readonly ISampleSetStorage _storage;
     private readonly IMutationProcessor _mutations;
     private readonly ICodeRecognizer _recognizer;
-    public ObservableCollection<SampleViewModel> Samples { get; } = [];
-    [ObservableProperty] private SampleViewModel? _selectedSample;
+    
+    public ObservableCollection<Samples.SampleViewModel> Samples { get; } = [];
+
+    [ObservableProperty] private Samples.SampleViewModel? _selectedSample;
     [ObservableProperty] private string _notice = "";
     [ObservableProperty] private string _setName = GenerationDefaults.NewSetName;
     [ObservableProperty] private string _error = "";
+
     public bool HasError => !string.IsNullOrEmpty(Error);
     public string Position => $"{(SelectedSample is null ? 0 : Samples.IndexOf(SelectedSample) + 1)} / {Samples.Count}";
     public int SampleCount => Samples.Count;
@@ -54,7 +57,7 @@ public sealed partial class WorkspaceViewModel : ObservableObject
     }
 
     partial void OnErrorChanged(string value) => OnPropertyChanged(nameof(HasError));
-    partial void OnSelectedSampleChanged(SampleViewModel? value)
+    partial void OnSelectedSampleChanged(Samples.SampleViewModel? value)
     {
         OnPropertyChanged(nameof(Position));
         OnPropertyChanged(nameof(SampleNumber));
@@ -77,7 +80,7 @@ public sealed partial class WorkspaceViewModel : ObservableObject
 
     private void ReplaceSamples(IReadOnlyList<SamplePreview> samples)
     {
-        var models = samples.Select(s => new SampleViewModel(s)).ToArray();
+        var models = samples.Select(s => new Samples.SampleViewModel(s)).ToArray();
         Samples.Clear();
         foreach (var sample in models) Samples.Add(sample);
         SelectedSample = Samples.FirstOrDefault();

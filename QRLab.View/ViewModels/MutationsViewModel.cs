@@ -5,6 +5,7 @@ using QRLab.Core.Models.Images;
 using QRLab.Core.Models.Mutations;
 using QRLab.View.Presentation;
 using QRLab.View.Presentation.Mutations;
+using QRLab.View.ViewModels.Mutations;
 
 namespace QRLab.View.ViewModels;
 
@@ -12,7 +13,7 @@ public sealed partial class MutationsViewModel : ScreenViewModel
 {
     private bool _loading;
     private readonly Stack<OperationViewModel> _undone = new();
-    public WorkspaceViewModel Workspace { get; }
+    public Workspace.WorkspaceViewModel Workspace { get; }
     public IReadOnlyList<EnumOption<ImageInterpolation>> Interpolations => MutationChoices.Interpolations;
     [ObservableProperty] private double _angleX = MutationDefaults.AngleX;
     [ObservableProperty] private double _angleY = MutationDefaults.AngleY;
@@ -40,7 +41,7 @@ public sealed partial class MutationsViewModel : ScreenViewModel
     public bool CanUndo => Operations.Count > 0;
     public bool CanRedo => _undone.Count > 0;
 
-    public MutationsViewModel(WorkspaceViewModel workspace) : base("02", "Мутации", "Редактор искажений / цепочка операций")
+    public MutationsViewModel(Workspace.WorkspaceViewModel workspace) : base("02", "Мутации", "Редактор искажений / цепочка операций")
     {
         Workspace = workspace;
         _selectedOperation = Operations.LastOrDefault();
@@ -181,7 +182,7 @@ public sealed partial class MutationsViewModel : ScreenViewModel
         finally { IsBusy = false; }
     }
 
-    private static void ReplaceOperations(SampleViewModel sample, IReadOnlyList<MutationFrame> frames)
+    private static void ReplaceOperations(Samples.SampleViewModel sample, IReadOnlyList<MutationFrame> frames)
     {
         sample.Operations.Clear();
         foreach (var (frame, index) in frames.Select((frame, index) => (frame, index)))

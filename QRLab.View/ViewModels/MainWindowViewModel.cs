@@ -10,13 +10,15 @@ namespace QRLab.View.ViewModels;
 
 public sealed partial class MainWindowViewModel : ObservableObject
 {
-    public WorkspaceViewModel Workspace { get; }
-    public GenerationViewModel Generation { get; }
+    public Workspace.WorkspaceViewModel Workspace { get; }
+    public Generation.GenerationViewModel Generation { get; }
     public MutationsViewModel Mutations { get; }
     public ReadingViewModel Reading { get; }
     public IReadOnlyList<ScreenViewModel> Screens { get; }
+    
     [ObservableProperty] private ScreenViewModel _selectedScreen;
     [ObservableProperty] private bool _isAboutOpen;
+    
     public MainWindowViewModel(ICodeGenerator generator, ISampleSetStorage storage, IMutationProcessor mutations, ICodeRecognizer recognizer, IRecognitionReportExporter reportExporter)
     {
         Workspace = new(generator, storage, mutations, recognizer);

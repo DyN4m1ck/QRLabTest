@@ -2,6 +2,7 @@ using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Platform.Storage;
 using QRLab.View.ViewModels;
+using GenerationViewModel = QRLab.View.ViewModels.Generation.GenerationViewModel;
 
 
 namespace QRLab.View.Views;

@@ -12,8 +12,8 @@ namespace QRLab.View.ViewModels;
 public sealed partial class ReadingViewModel : ScreenViewModel
 {
     private readonly IRecognitionReportExporter _exporter;
-    private readonly HashSet<SampleViewModel> _observed = [];
-    public WorkspaceViewModel Workspace { get; }
+    private readonly HashSet<Samples.SampleViewModel> _observed = [];
+    public Workspace.WorkspaceViewModel Workspace { get; }
     public IReadOnlyList<EnumOption<RecognitionFilter>> Filters => RecognitionChoices.Filters;
     public NumericRange TimeoutRange { get; } = new(RecognitionDefaults.MinimumTimeoutMilliseconds, RecognitionDefaults.MaximumTimeoutMilliseconds);
     [ObservableProperty] private RecognitionFilter _filter = RecognitionFilter.All;
@@ -24,9 +24,9 @@ public sealed partial class ReadingViewModel : ScreenViewModel
     [ObservableProperty] private bool _isBusy;
     [ObservableProperty] private bool _isExporting;
     [ObservableProperty] private string _exportDestination = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "QRLab", "results.csv");
-    [ObservableProperty] private SampleViewModel? _selectedResult;
+    [ObservableProperty] private Samples.SampleViewModel? _selectedResult;
 
-    public IReadOnlyList<SampleViewModel> Results => Workspace.Samples.Where(sample =>
+    public IReadOnlyList<Samples.SampleViewModel> Results => Workspace.Samples.Where(sample =>
         (Filter == RecognitionFilter.All || Filter == RecognitionFilter.Successful && sample.IsSuccess
             || Filter == RecognitionFilter.Failed && sample.IsFailure)
         && (sample.Name.Contains(Search, StringComparison.OrdinalIgnoreCase)
@@ -40,7 +40,7 @@ public sealed partial class ReadingViewModel : ScreenViewModel
     public string Average => ResultsChecked == 0 ? "—" : $"{Workspace.Samples.Where(s => s.Result is not null).Average(s => s.Result!.Milliseconds):N1} мс";
     public string Rate => ResultsChecked == 0 ? "Нет результатов" : $"{100d * ResultsSuccess / ResultsChecked:N1}% от проверенных";
 
-    public ReadingViewModel(WorkspaceViewModel workspace, IRecognitionReportExporter exporter)
+    public ReadingViewModel(Workspace.WorkspaceViewModel workspace, IRecognitionReportExporter exporter)
         : base("03", "Считывание и статистика", "Декодирование изображений и экспорт результатов")
     {
         Workspace = workspace;
@@ -54,7 +54,7 @@ public sealed partial class ReadingViewModel : ScreenViewModel
         SynchronizeSamples();
     }
 
-    partial void OnSelectedResultChanged(SampleViewModel? value)
+    partial void OnSelectedResultChanged(Samples.SampleViewModel? value)
     {
         if (value is not null) Workspace.SelectedSample = value;
     }
@@ -74,7 +74,7 @@ public sealed partial class ReadingViewModel : ScreenViewModel
     }
     private void SampleChanged(object? sender, PropertyChangedEventArgs args)
     {
-        if (args.PropertyName == nameof(SampleViewModel.Result)) Refresh();
+        if (args.PropertyName == nameof(Samples.SampleViewModel.Result)) Refresh();
     }
 
     [RelayCommand(IncludeCancelCommand = true)]
