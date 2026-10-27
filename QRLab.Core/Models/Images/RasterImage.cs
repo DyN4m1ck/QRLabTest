@@ -3,7 +3,9 @@ using QRLab.Core.Models.Generation;
 
 namespace QRLab.Core.Models.Images;
 
-/// <summary>Immutable PNG data shared by generation, mutation, previews and storage.</summary>
+/// <summary>
+/// Immutable PNG data shared by generation, mutation, previews and storage.
+/// </summary>
 public sealed class RasterImage
 {
     public const string FormatName = "PNG";

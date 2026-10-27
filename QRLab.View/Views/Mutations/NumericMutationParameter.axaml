@@ -1,0 +1,11 @@
+<UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="using:QRLab.View.Views.Mutations" x:Class="QRLab.View.Views.Mutations.NumericMutationParameter"
+             x:Name="Root" x:DataType="local:NumericMutationParameter">
+  <StackPanel Spacing="1">
+    <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
+      <TextBlock Text="{Binding #Root.Label}" Classes="label"/>
+      <NumericUpDown Grid.Column="1" Value="{Binding #Root.Value, Mode=TwoWay}" Minimum="{Binding #Root.Minimum}" Maximum="{Binding #Root.Maximum}" Increment="0.1" FormatString="0.0"/>
+    </Grid>
+    <Slider Minimum="{Binding #Root.Minimum}" Maximum="{Binding #Root.Maximum}" Value="{Binding #Root.Value, Mode=TwoWay}"/>
+  </StackPanel>
+</UserControl>

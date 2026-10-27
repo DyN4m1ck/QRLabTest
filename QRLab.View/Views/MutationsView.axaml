@@ -4,12 +4,10 @@
               xmlns:c="using:QRLab.View.Controls"
               xmlns:p="using:QRLab.View.Presentation"
               xmlns:icons="using:QRLab.View.Controls"
+              xmlns:settings="using:QRLab.View.Views.Mutations"
               xmlns:mutations="clr-namespace:QRLab.View.ViewModels.Mutations"
               x:Class="QRLab.View.Views.MutationsView"
               x:DataType="vm:MutationsViewModel">
-  <UserControl.Resources>
-    <DataTemplate x:Key="MutationChoiceTemplate" x:DataType="p:EnumOption"><TextBlock Text="{Binding Name}"/></DataTemplate>
-  </UserControl.Resources>
   <Grid Margin="18" RowDefinitions="Auto,*">
     <Grid ColumnDefinitions="*,Auto" Margin="0,0,0,16">
       <StackPanel Spacing="4">
@@ -88,74 +86,37 @@
           </Grid>
         </Border>
       </Grid>
-      <Border Grid.Column="2" Classes="card">
-        <Grid RowDefinitions="Auto,200,*">
-          <Border Classes="panelHead"><TextBlock Text="Последовательность операций" Classes="heading"/></Border>
-          <ListBox Grid.Row="1" ItemsSource="{Binding Operations}" SelectedItem="{Binding SelectedOperation, Mode=TwoWay}">
-            <ListBox.ItemTemplate>
-              <DataTemplate x:DataType="mutations:OperationViewModel">
-                <Grid ColumnDefinitions="24,*">
-                  <TextBlock Text="{Binding Number}" Classes="accent" FontSize="10"/>
-                  <StackPanel Grid.Column="1" Spacing="4">
-                    <TextBlock Text="{Binding Name}" FontSize="12"/>
-                    <TextBlock Text="{Binding Details}" Classes="muted" FontSize="10" TextWrapping="Wrap"/>
-                  </StackPanel>
-                </Grid>
-              </DataTemplate>
-            </ListBox.ItemTemplate>
-          </ListBox>
-          <ScrollViewer Grid.Row="2">
-            <StackPanel Margin="14" Spacing="8">
-              <TextBlock Text="Параметры операции" Classes="heading"/>
-              <StackPanel IsVisible="{Binding IsPerspective}" Spacing="5">
-                <TextBlock Text="Наклон по X, °" Classes="label"/>
-                <Grid ColumnDefinitions="*,90" ColumnSpacing="8">
-                  <Slider x:Name="AngleXSlider" Minimum="-60" Maximum="60" Value="{Binding AngleX, Mode=TwoWay}"/>
-                  <NumericUpDown Grid.Column="1" Value="{Binding AngleX, Mode=TwoWay}" Minimum="{Binding #AngleXSlider.Minimum}" Maximum="{Binding #AngleXSlider.Maximum}" Increment="0.1" FormatString="0.0"/>
-                </Grid>
-                <TextBlock Text="Наклон по Y, °" Classes="label"/>
-                <Grid ColumnDefinitions="*,90" ColumnSpacing="8">
-                  <Slider x:Name="AngleYSlider" Minimum="-60" Maximum="60" Value="{Binding AngleY, Mode=TwoWay}"/>
-                  <NumericUpDown Grid.Column="1" Value="{Binding AngleY, Mode=TwoWay}" Minimum="{Binding #AngleYSlider.Minimum}" Maximum="{Binding #AngleYSlider.Maximum}" Increment="0.1" FormatString="0.0"/>
-                </Grid>
-                <TextBlock Text="Дистанция проекции" Classes="label"/>
-                <Grid ColumnDefinitions="*,90" ColumnSpacing="8">
-                  <Slider x:Name="DistanceSlider" Minimum="1" Maximum="10" Value="{Binding Distance, Mode=TwoWay}"/>
-                  <NumericUpDown Grid.Column="1" Value="{Binding Distance, Mode=TwoWay}" Minimum="{Binding #DistanceSlider.Minimum}" Maximum="{Binding #DistanceSlider.Maximum}" Increment="0.1" FormatString="0.0"/>
-                </Grid>
-                <TextBlock Text="Интерполяция" Classes="label"/>
-                <ComboBox ItemsSource="{Binding Interpolations}" ItemTemplate="{StaticResource MutationChoiceTemplate}"
-                    SelectedValue="{Binding Interpolation, Mode=TwoWay}" SelectedValueBinding="{Binding Value, DataType=p:EnumOption}"/>
-              </StackPanel>
-              <StackPanel IsVisible="{Binding IsBlur}" Spacing="1">
-                <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
-                  <TextBlock Text="Сила размытия, σ" Classes="label"/>
-                  <NumericUpDown Grid.Column="1" Value="{Binding Blur, Mode=TwoWay}" Minimum="{Binding #BlurSlider.Minimum}" Maximum="{Binding #BlurSlider.Maximum}" Increment="0.1" FormatString="0.0"/>
-                </Grid>
-                <Slider x:Name="BlurSlider" Minimum="0" Maximum="50" Value="{Binding Blur, Mode=TwoWay}"/>
-              </StackPanel>
-              <StackPanel IsVisible="{Binding IsSaltAndPepper}" Spacing="5">
-                <TextBlock Text="Плотность шума, %" Classes="label"/>
-                <Grid ColumnDefinitions="*,90" ColumnSpacing="8">
-                  <Slider x:Name="NoiseDensitySlider" Minimum="0" Maximum="100" Value="{Binding NoiseDensity, Mode=TwoWay}"/>
-                  <NumericUpDown Grid.Column="1" Value="{Binding NoiseDensity, Mode=TwoWay}" Minimum="{Binding #NoiseDensitySlider.Minimum}" Maximum="{Binding #NoiseDensitySlider.Maximum}" Increment="0.1" FormatString="0.0"/>
-                </Grid>
-                <TextBlock Text="Доля белых точек, %" Classes="label"/>
-                <Grid ColumnDefinitions="*,90" ColumnSpacing="8">
-                  <Slider x:Name="SaltPercentSlider" Minimum="0" Maximum="100" Value="{Binding SaltPercent, Mode=TwoWay}"/>
-                  <NumericUpDown Grid.Column="1" Value="{Binding SaltPercent, Mode=TwoWay}" Minimum="{Binding #SaltPercentSlider.Minimum}" Maximum="{Binding #SaltPercentSlider.Maximum}" Increment="0.1" FormatString="0.0"/>
-                </Grid>
-                <TextBlock Text="Seed" Classes="label"/>
-                <NumericUpDown Value="{Binding Seed, Mode=TwoWay}" Minimum="0" Maximum="2147483647" FormatString="0"/>
-                <Button Content="Новый seed" Command="{Binding RandomizeCommand}"/>
-              </StackPanel>
-              <Border Classes="divider"/>
-              <Button Content="Сбросить цепочку" Command="{Binding ResetCommand}" HorizontalAlignment="Stretch"/>
-              <Button Content="К распознаванию" Command="{ReflectionBinding $parent[Window].DataContext.NavigateCommand}" CommandParameter="03" HorizontalAlignment="Stretch"/>
-            </StackPanel>
+      <Grid Grid.Column="2" RowDefinitions="*,400,Auto" RowSpacing="10">
+          <Border Grid.Row="0" Classes="card">
+            <Grid RowDefinitions="Auto,200,*">
+              <Border Classes="panelHead"><TextBlock Text="Последовательность операций" Classes="heading"/></Border>
+                <ListBox Grid.Row="1"  ItemsSource="{Binding Operations}" SelectedItem="{Binding SelectedOperation, Mode=TwoWay}">
+                  <ListBox.ItemTemplate>
+                    <DataTemplate x:DataType="mutations:OperationViewModel">
+                      <Grid ColumnDefinitions="24,*">
+                        <TextBlock Text="{Binding Number}" Classes="accent" FontSize="10"/>
+                        <StackPanel Grid.Column="1" Spacing="4">
+                          <TextBlock Text="{Binding Name}" FontSize="12"/>
+                          <TextBlock Text="{Binding Details}" Classes="muted" FontSize="10" TextWrapping="Wrap"/>
+                        </StackPanel>
+                      </Grid>
+                    </DataTemplate>
+                  </ListBox.ItemTemplate>
+                </ListBox>
+            </Grid>
+          </Border>
+        <Border Grid.Row="1" Classes="card">
+          <ScrollViewer Padding="14">
+            <settings:MutationSettingsView/>
           </ScrollViewer>
-        </Grid>
-      </Border>
+        </Border>
+        <Border Grid.Row="2" Classes="card">
+          <StackPanel Margin="14" Spacing="8">
+            <Button Content="Сбросить цепочку" Command="{Binding ResetCommand}" HorizontalAlignment="Stretch"/>
+            <Button Content="К распознаванию" Command="{ReflectionBinding $parent[Window].DataContext.NavigateCommand}" CommandParameter="03" HorizontalAlignment="Stretch"/>
+          </StackPanel>
+        </Border>
+      </Grid>
     </Grid>
     <Border Grid.RowSpan="2" VerticalAlignment="Bottom" HorizontalAlignment="Center" MaxWidth="650" Margin="16" Padding="14"
             Background="#492B2B" CornerRadius="8" IsVisible="{Binding Workspace.HasError}">

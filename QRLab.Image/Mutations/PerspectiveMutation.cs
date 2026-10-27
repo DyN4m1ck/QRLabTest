@@ -4,13 +4,16 @@ using SkiaSharp;
 
 namespace QRLab.Image.Mutations;
 
+
 public sealed class PerspectiveMutation : ImageMutation<PerspectiveMutationOptions>
 {
     public override MutationKind Kind => MutationKind.Perspective;
 
     protected override RasterImage Apply(RasterImage source, PerspectiveMutationOptions options)
     {
-        if (options.AngleX == 0 && options.AngleY == 0) return source;
+        if (options is { AngleX: 0, AngleY: 0 }) 
+            return source;
+        
         var ax = options.AngleX * Math.PI / 180;
         var ay = options.AngleY * Math.PI / 180;
         var cx = source.Width / 2d; var cy = source.Height / 2d;
@@ -26,6 +29,7 @@ public sealed class PerspectiveMutation : ImageMutation<PerspectiveMutationOptio
             TransY = (float)(-d * cy + cy * p0),
             Persp0 = (float)px, Persp1 = (float)py, Persp2 = (float)p0
         };
+        
         var sampling = options.Interpolation switch
         {
             ImageInterpolation.Nearest => new SKSamplingOptions(SKFilterMode.Nearest),
@@ -33,11 +37,13 @@ public sealed class PerspectiveMutation : ImageMutation<PerspectiveMutationOptio
             ImageInterpolation.Bicubic => new SKSamplingOptions(SKCubicResampler.Mitchell),
             _ => throw new ArgumentOutOfRangeException(nameof(options))
         };
+        
         using var image = SKImage.FromEncodedData(source.Data.Span);
         using var surface = SKSurface.Create(new SKImageInfo(source.Width, source.Height, SKColorType.Bgra8888, SKAlphaType.Opaque));
         surface.Canvas.Clear(SKColors.White);
         surface.Canvas.SetMatrix(matrix);
         surface.Canvas.DrawImage(image, 0, 0, sampling);
+        
         using var result = surface.Snapshot();
         using var png = result.Encode(SKEncodedImageFormat.Png, 100);
         return new RasterImage(png.AsSpan());

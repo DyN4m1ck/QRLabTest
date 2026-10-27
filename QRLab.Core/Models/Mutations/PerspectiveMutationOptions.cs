@@ -1,5 +1,7 @@
 namespace QRLab.Core.Models.Mutations;
 
+public enum ImageInterpolation { Bicubic, Bilinear, Nearest }
+
 public sealed record PerspectiveMutationOptions : MutationOptions
 {
     public override MutationKind Kind => MutationKind.Perspective;
@@ -10,7 +12,7 @@ public sealed record PerspectiveMutationOptions : MutationOptions
 
     public override void Validate()
     {
-        if (!double.IsFinite(AngleX) || Math.Abs(AngleX) > MutationDefaults.MaximumAngle
+        if (!double.IsFinite(AngleX) || Math.Abs(AngleX) > MutationDefaults.MaximumAngle 
             || !double.IsFinite(AngleY) || Math.Abs(AngleY) > MutationDefaults.MaximumAngle
             || !double.IsFinite(Distance) || Distance < MutationDefaults.MinimumDistance || Distance > MutationDefaults.MaximumDistance
             || !Enum.IsDefined(Interpolation))
