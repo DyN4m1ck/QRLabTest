@@ -174,13 +174,18 @@ public sealed class WindowTests
         try
         {
             window.Show(); vm.NavigateCommand.Execute("02"); Dispatcher.UIThread.RunJobs();
-            var input = window.GetVisualDescendants().OfType<NumericUpDown>().Single(control => control.Name == "SampleNumberInput");
-            input.Value = 2; Dispatcher.UIThread.RunJobs();
+            var position = window.GetVisualDescendants().OfType<TextBlock>().Single(control => control.Text == "1 / 3");
+            var next = window.GetVisualDescendants().OfType<Button>().Single(button => ReferenceEquals(button.Command, vm.Workspace.NextCommand));
+            var previous = window.GetVisualDescendants().OfType<Button>().Single(button => ReferenceEquals(button.Command, vm.Workspace.PreviousCommand));
+            Assert.False(previous.IsEffectivelyEnabled); Assert.True(next.IsEffectivelyEnabled);
+            next.Command!.Execute(null); Dispatcher.UIThread.RunJobs();
             Assert.Same(vm.Workspace.Samples[1], vm.Workspace.SelectedSample);
-            vm.Workspace.NextCommand.Execute(null); Dispatcher.UIThread.RunJobs();
-            Assert.Equal(3, input.Value); Assert.False(vm.Workspace.NextCommand.CanExecute(null));
-            vm.Workspace.PreviousCommand.Execute(null); Dispatcher.UIThread.RunJobs();
-            Assert.Equal(2, input.Value);
+            Assert.Equal("2 / 3", position.Text);
+            next.Command.Execute(null); Dispatcher.UIThread.RunJobs();
+            Assert.Same(vm.Workspace.Samples[2], vm.Workspace.SelectedSample);
+            Assert.Equal("3 / 3", position.Text); Assert.False(next.IsEffectivelyEnabled);
+            previous.Command!.Execute(null); Dispatcher.UIThread.RunJobs();
+            Assert.Equal("2 / 3", position.Text); Assert.True(next.IsEffectivelyEnabled);
             vm.Workspace.SampleNumber = 100;
             Assert.Same(vm.Workspace.Samples[1], vm.Workspace.SelectedSample);
             Assert.Equal(3, vm.Workspace.SampleCount);

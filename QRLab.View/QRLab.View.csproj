@@ -11,8 +11,8 @@
     <TrimMode>partial</TrimMode>
     <JsonSerializerIsReflectionEnabledByDefault>true</JsonSerializerIsReflectionEnabledByDefault>
   </PropertyGroup>
+  
   <ItemGroup>
-    <!-- Keep reflection-based bindings and stored document models intact. -->
     <TrimmerRootAssembly Include="QRLab" />
     <TrimmerRootAssembly Include="QRLab.Core" />
     <TrimmerRootAssembly Include="QRLab.Image" />
