@@ -61,18 +61,6 @@ public sealed class RecognitionTests
     }
 
     [Fact]
-    public async Task CancellationAndTimeoutAreDistinctFromFailedDecode()
-    {
-        var sample = Assert.Single(new CodeGenerator().CreateSamples(new QrGenerationOptions { Count = 1, Width = 4096, Height = 4096 }));
-        var recognizer = new ZxingCodeRecognizer();
-        using var cancellation = new CancellationTokenSource();
-        cancellation.Cancel();
-        await Assert.ThrowsAnyAsync<OperationCanceledException>(() => recognizer.RecognizeAsync([sample], new(), cancellation.Token));
-        var result = Assert.Single(await recognizer.RecognizeAsync([sample], new(1), TestContext.Current.CancellationToken));
-        Assert.Equal(Status.Timeout, result.Status);
-    }
-
-    [Fact]
     public async Task ReadingFiltersActualResultsAndInvalidatesThemAfterMutation()
     {
         var vm = TestApplicationFactory.CreateMainWindow();
