@@ -44,8 +44,6 @@
             <icons:SvgIcon Source="logo" Width="20" Height="20" Foreground="{DynamicResource ActiveIconBrush}"/>
           </Button>
           <TextBlock Text="QRLab" FontWeight="Bold" FontSize="15"/>
-          <TextBlock Text="/" Classes="muted" Margin="12,0"/>
-          <Button Classes="flat" Content="О проекте" Command="{Binding AboutCommand}"/>
         </StackPanel>
         <TextBlock Grid.Column="2" Text="●" Classes="accent" FontSize="10" LetterSpacing="1"/>
       </Grid>
@@ -74,16 +72,6 @@
           </DataTemplate>
         </ListBox.ItemTemplate>
       </ListBox>
-    </Border>
-    <Border Grid.RowSpan="4" Background="#DD0B1011" IsVisible="{Binding IsAboutOpen}">
-      <Border Classes="card" Width="480" Padding="32" HorizontalAlignment="Center" VerticalAlignment="Center">
-        <StackPanel Spacing="18">
-          <TextBlock Text="QRLab / лаборатория кодов" FontSize="22" FontWeight="SemiBold"/>
-          <TextBlock Text="Создание набора кодов, настройка искажений и распознавание." TextWrapping="Wrap"/>
-          <TextBlock Text="Генерация кодов, алгоритмические искажения, декодирование ZXing.Net и выгрузка результатов в CSV." Classes="muted" TextWrapping="Wrap"/>
-          <Button Classes="primary" Content="Вернуться к работе" Command="{Binding AboutCommand}"/>
-        </StackPanel>
-      </Border>
     </Border>
   </Grid>
 </Window>
