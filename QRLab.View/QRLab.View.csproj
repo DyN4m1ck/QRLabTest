@@ -4,8 +4,18 @@
     <ImplicitUsings>enable</ImplicitUsings><Nullable>enable</Nullable>
     <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
     <Version>0.1.0</Version>
+    <AssemblyName>QRLab</AssemblyName>
+    <RootNamespace>QRLab.View</RootNamespace>
+    <ApplicationIcon>Assets/QRLab.ico</ApplicationIcon>
+    <PublishTrimmed>true</PublishTrimmed>
+    <TrimMode>partial</TrimMode>
+    <JsonSerializerIsReflectionEnabledByDefault>true</JsonSerializerIsReflectionEnabledByDefault>
   </PropertyGroup>
   <ItemGroup>
+    <!-- Keep reflection-based bindings and stored document models intact. -->
+    <TrimmerRootAssembly Include="QRLab" />
+    <TrimmerRootAssembly Include="QRLab.Core" />
+    <TrimmerRootAssembly Include="QRLab.Image" />
     <ProjectReference Include="../QRLab.Core/QRLab.Core.csproj" />
     <ProjectReference Include="../QRLab.Image/QRLab.Image.csproj" />
     <PackageReference Include="Avalonia" Version="12.1.4" />

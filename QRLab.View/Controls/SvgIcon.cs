@@ -37,7 +37,7 @@ public sealed class SvgIcon : TemplatedControl
 
     private static IconDrawing Load(string name)
     {
-        using var stream = AssetLoader.Open(new Uri($"avares://QRLab.View/Assets/svg/{name}.svg"));
+        using var stream = AssetLoader.Open(new Uri($"avares://QRLab/Assets/svg/{name}.svg"));
         var root = XDocument.Load(stream).Root!;
         var box = root.Attribute("viewBox")!.Value.Split(' ', StringSplitOptions.RemoveEmptyEntries)
             .Select(x => double.Parse(x, CultureInfo.InvariantCulture)).ToArray();

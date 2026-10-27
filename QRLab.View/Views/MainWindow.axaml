@@ -5,6 +5,7 @@
         xmlns:icons="using:QRLab.View.Controls"
         xmlns:generation="clr-namespace:QRLab.View.ViewModels.Generation"
         x:Class="QRLab.View.Views.MainWindow"
+        Icon="/Assets/QRLab.ico"
         x:DataType="vm:MainWindowViewModel" 
         Title="QRLab — лаборатория устойчивости кодов" 
         Width="1440" Height="940" 
@@ -54,7 +55,7 @@
       <Grid ColumnDefinitions="Auto,*,Auto">
         <TextBlock Text="{Binding Workspace.SetName}" Classes="muted" FontSize="10" MaxWidth="300" TextTrimming="CharacterEllipsis"/>
         <TextBlock Grid.Column="1" Text="{Binding Workspace.Notice}" TextTrimming="CharacterEllipsis" TextAlignment="Center" Margin="16,0" Classes="muted" FontSize="10"/>
-        <TextBlock Grid.Column="2" Text="AVALONIA / MVVM" Classes="muted" FontSize="10"/>
+        <TextBlock Grid.Column="2" Text="" Classes="muted" FontSize="10"/>
       </Grid>
     </Border>
     <Border Grid.Row="3" Background="#0E1213">
