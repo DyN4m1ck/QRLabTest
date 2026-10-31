@@ -9,9 +9,7 @@ using QRLab.Core.Models.Images;
 
 namespace QRLab.View.Controls;
 
-/// <summary>
 /// Decodes existing PNG data for display; navigation never changes the image.
-/// </summary>
 public sealed class RasterPreview : Control
 {
     private const double DefaultZoom = 1;

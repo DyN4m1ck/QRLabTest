@@ -1,3 +1,14 @@
 namespace QRLab.Core.Models.Recognition;
 
-public enum Status { Success, Failed, Timeout, Mismatch }
+/// Итоговые состояния распознавания одного изображения.
+public enum Status
+{
+    /// Код считан и совпадает с ожидаемым содержимым.
+    Success,
+    /// Код не удалось найти/декодировать.
+    Failed,
+    /// Декодирование не уложилось в тайм-аут.
+    Timeout,
+    /// Код считан, но текст не совпадает с ожидаемым.
+    Mismatch
+}
