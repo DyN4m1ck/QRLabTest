@@ -8,7 +8,7 @@ using Avalonia.Platform;
 
 namespace QRLab.View.Controls;
 
-/// <summary>Monochrome path SVG assets, rendered with Avalonia's inherited Foreground.</summary>
+/// Monochrome path SVG assets, rendered with Avalonia's inherited Foreground.
 public sealed class SvgIcon : TemplatedControl
 {
     public static readonly StyledProperty<string?> SourceProperty =

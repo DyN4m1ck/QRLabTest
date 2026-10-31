@@ -1,15 +1,15 @@
 namespace QRLab.Core.Models.Mutations;
 
-/// <summary>Параметры гауссова размытия: одна величина sigma (в пикселях).</summary>
+/// Параметры гауссова размытия: одна величина sigma (в пикселях).
 public sealed record GaussianBlurOptions : MutationOptions
 {
-    /// <summary>Вид мутации — размытие.</summary>
+    /// Вид мутации — размытие.
     public override MutationKind Kind => MutationKind.GaussianBlur;
 
-    /// <summary>Стандартное отклонение гауссова ядра; 0 означает «без эффекта».</summary>
+    /// Стандартное отклонение гауссова ядра; 0 означает «без эффекта».
     public double Sigma { get; init; } = MutationDefaults.Sigma;
 
-    /// <summary>Проверяет конечность и диапазон sigma.</summary>
+    /// Проверяет конечность и диапазон sigma.
     public override void Validate()
     {
         if (!double.IsFinite(Sigma) || Sigma < MutationDefaults.MinimumSigma || Sigma > MutationDefaults.MaximumSigma)

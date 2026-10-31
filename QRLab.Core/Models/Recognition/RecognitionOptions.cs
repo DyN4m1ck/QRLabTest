@@ -1,11 +1,11 @@
 namespace QRLab.Core.Models.Recognition;
 
-/// <summary>Параметры одного прогона распознавания: лимит времени и режим качества.</summary>
+/// Параметры одного прогона распознавания: лимит времени и режим качества.
 public sealed record RecognitionOptions(
     int TimeoutMilliseconds = RecognitionDefaults.TimeoutMilliseconds,
     bool Enhanced = RecognitionDefaults.Enhanced)
 {
-    /// <summary>Проверяет, что тайм-аут лежит в допустимом диапазоне.</summary>
+    /// Проверяет, что тайм-аут лежит в допустимом диапазоне.
     public void Validate()
     {
         if (TimeoutMilliseconds < RecognitionDefaults.MinimumTimeoutMilliseconds || TimeoutMilliseconds > RecognitionDefaults.MaximumTimeoutMilliseconds)

@@ -1,22 +1,20 @@
 namespace QRLab.Core.Models.Mutations;
 
-/// <summary>
 /// Параметры импульсного шума «соль и перец»: какой доля пикселей управлять
 /// и какая часть из них станет белой («соль») вместо чёрного («перец»).
 /// Seed задаёт детерминированность: те же параметры — тот же рисунок шума.
-/// </summary>
 public sealed record SaltAndPepperOptions : MutationOptions
 {
-    /// <summary>Вид мутации — импульсный шум.</summary>
+    /// Вид мутации — импульсный шум.
     public override MutationKind Kind => MutationKind.SaltAndPepper;
-    /// <summary>Плотность шума: % пикселей, которые будут заменены, 0..100.</summary>
+    /// Плотность шума: % пикселей, которые будут заменены, 0..100.
     public double DensityPercent { get; init; } = MutationDefaults.NoisePercent;
-    /// <summary>Доля белых точек среди зашумлённых пикселей, %, 0..100.</summary>
+    /// Доля белых точек среди зашумлённых пикселей, %, 0..100.
     public double SaltPercent { get; init; } = MutationDefaults.SaltPercent;
-    /// <summary>Зерно ГСЧ для воспроизводимости результата.</summary>
+    /// Зерно ГСЧ для воспроизводимости результата.
     public int Seed { get; init; } = MutationDefaults.Seed;
 
-    /// <summary>Проверяет конечность и процентные диапазоны обоих параметров.</summary>
+    /// Проверяет конечность и процентные диапазоны обоих параметров.
     public override void Validate()
     {
         if (!double.IsFinite(DensityPercent) || DensityPercent is < 0 or > 100

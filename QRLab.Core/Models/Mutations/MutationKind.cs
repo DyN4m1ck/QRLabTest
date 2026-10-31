@@ -1,4 +1,4 @@
 namespace QRLab.Core.Models.Mutations;
 
-/// <summary>Виды поддерживаемых искажений изображений.</summary>
+/// Виды поддерживаемых искажений изображений.
 public enum MutationKind { GaussianBlur, SaltAndPepper, Perspective }

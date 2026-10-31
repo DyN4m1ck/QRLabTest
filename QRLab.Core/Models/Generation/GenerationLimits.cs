@@ -1,25 +1,23 @@
 namespace QRLab.Core.Models.Generation;
 
-/// <summary>
 /// Допустимые границы числовых параметров генерации. Используются валидацией
 /// GenerationOptions, ограничителями полей ввода UI и классом RasterImage.
-/// </summary>
 public static class GenerationLimits
 {
-    /// <summary>Минимальное количество образцов в пакете.</summary>
+    /// Минимальное количество образцов в пакете.
     public const int MinimumCount = 1;
-    /// <summary>Максимальное количество образцов в пакете.</summary>
+    /// Максимальное количество образцов в пакете.
     public const int MaximumCount = 1000;
-    /// <summary>Максимальный первый номер (чтобы нумерация не переполняла int).</summary>
+    /// Максимальный первый номер (чтобы нумерация не переполняла int).
     public const int MaximumFirstNumber = 999999;
-    /// <summary>Минимальный размер стороны изображения, px.</summary>
+    /// Минимальный размер стороны изображения, px.
     public const int MinimumImageSize = 128;
-    /// <summary>Максимальный размер стороны изображения, px.</summary>
+    /// Максимальный размер стороны изображения, px.
     public const int MaximumImageSize = 8192;
-    /// <summary>Минимальная тихая зона, модули.</summary>
+    /// Минимальная тихая зона, модули.
     public const int MinimumQuietZone = 0;
-    /// <summary>Максимальная тихая зона, модули.</summary>
+    /// Максимальная тихая зона, модули.
     public const int MaximumQuietZone = 16;
-    /// <summary>Максимальная версия QR-кода по стандарту.</summary>
+    /// Максимальная версия QR-кода по стандарту.
     public const int MaximumQrVersion = 40;
 }

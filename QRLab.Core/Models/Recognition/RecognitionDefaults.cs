@@ -1,16 +1,16 @@
 namespace QRLab.Core.Models.Recognition;
 
-/// <summary>Значения по умолчанию и границы для распознавания кодов.</summary>
+/// Значения по умолчанию и границы для распознавания кодов.
 public static class RecognitionDefaults
 {
-    /// <summary>Название декодера, попадает в отчёты/интерфейс.</summary>
+    /// Название декодера, попадает в отчёты/интерфейс.
     public const string DecoderName = "ZXing.Net";
-    /// <summary>Тайм-аут декодирования одного изображения по умолчанию, мс.</summary>
+    /// Тайм-аут декодирования одного изображения по умолчанию, мс.
     public const int TimeoutMilliseconds = 500;
-    /// <summary>Минимально допустимый тайм-аут, мс.</summary>
+    /// Минимально допустимый тайм-аут, мс.
     public const int MinimumTimeoutMilliseconds = 1;
-    /// <summary>Максимально допустимый тайм-аут, мс.</summary>
+    /// Максимально допустимый тайм-аут, мс.
     public const int MaximumTimeoutMilliseconds = 60000;
-    /// <summary>«Улучшенный» режим (TryHarder) по умолчанию.</summary>
+    /// «Улучшенный» режим (TryHarder) по умолчанию.
     public const bool Enhanced = true;
 }

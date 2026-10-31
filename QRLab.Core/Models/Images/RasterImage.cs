@@ -3,34 +3,30 @@ using QRLab.Core.Models.Generation;
 
 namespace QRLab.Core.Models.Images;
 
-/// <summary>
 /// Неизменяемый (immutable) буфер PNG-изображения — единый формат «картинки»,
 /// который передаётся между генерацией, мутациями, предпросмотром и хранилищем.
 /// Байты копируются внутрь объекта, поэтому изменить изображение извне нельзя;
 /// размеры считываются прямо из заголовка IHDR при создании экземпляра.
-/// </summary>
 public sealed class RasterImage
 {
-    /// <summary>Название формата — используется в интерфейсе и описаниях наборов.</summary>
+    /// Название формата — используется в интерфейсе и описаниях наборов.
     public const string FormatName = "PNG";
-    /// <summary>Расширение файла при сохранении на диск.</summary>
+    /// Расширение файла при сохранении на диск.
     public const string FileExtension = ".png";
 
-    /// <summary>Внутренний массив байтов PNG; наружу отдаётся только как ReadOnlyMemory.</summary>
+    /// Внутренний массив байтов PNG; наружу отдаётся только как ReadOnlyMemory.
     private readonly byte[] _data;
 
-    /// <summary>Ширина изображения в пикселях (из chunk IHDR).</summary>
+    /// Ширина изображения в пикселях (из chunk IHDR).
     public int Width { get; }
-    /// <summary>Высота изображения в пикселях (из chunk IHDR).</summary>
+    /// Высота изображения в пикселях (из chunk IHDR).
     public int Height { get; }
 
-    /// <summary>Байты PNG для чтения без лишнего копирования (SkiaSharp, ZXing и т.п.).</summary>
+    /// Байты PNG для чтения без лишнего копирования (SkiaSharp, ZXing и т.п.).
     public ReadOnlyMemory<byte> Data => _data;
 
-    /// <summary>
     /// Создаёт изображение из байтов PNG: проверяет сигнатуру файла и наличие
     /// chunk IHDR, затем считывает размеры и убеждается, что они в допустимых пределах.
-    /// </summary>
     public RasterImage(ReadOnlySpan<byte> data)
     {
         // Стандартная сигнатура PNG: 89 50 4E 47 0D 0A 1A 0A.
@@ -50,8 +46,8 @@ public sealed class RasterImage
         _data = data.ToArray();
     }
 
-    /// <summary>Открывает поток для чтения байтов (только для чтения).</summary>
+    /// Открывает поток для чтения байтов (только для чтения).
     public Stream OpenRead() => new MemoryStream(_data, writable: false);
-    /// <summary>Записывает байты PNG в произвольный поток (используется хранилищем).</summary>
+    /// Записывает байты PNG в произвольный поток (используется хранилищем).
     public void WriteTo(Stream destination) => destination.Write(_data);
 }

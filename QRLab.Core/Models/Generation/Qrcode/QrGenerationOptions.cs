@@ -1,18 +1,18 @@
 namespace QRLab.Core.Models.Generation.Qrcode;
 
-/// <summary>Параметры генерации QR-кода: версия и уровень коррекции поверх общих настроек.</summary>
+/// Параметры генерации QR-кода: версия и уровень коррекции поверх общих настроек.
 public sealed record QrGenerationOptions : GenerationOptions
 {
-    /// <summary>Версия QR (1..40); 0 — автоматический выбор по объёму данных.</summary>
+    /// Версия QR (1..40); 0 — автоматический выбор по объёму данных.
     public int Version { get; init; } = GenerationDefaults.AutomaticQrVersion;
-    /// <summary>Уровень коррекции ошибок L/M/Q/H.</summary>
+    /// Уровень коррекции ошибок L/M/Q/H.
     public QrCorrectionLevel Correction { get; init; } = GenerationDefaults.Correction;
-    /// <summary>Род кода — QR.</summary>
+    /// Род кода — QR.
     public override CodeKind Kind => CodeKind.QrCode;
-    /// <summary>Префикс имён образцов.</summary>
+    /// Префикс имён образцов.
     public override string SamplePrefix => "QR";
 
-    /// <summary>Проверяет общие параметры и специфичные для QR (версия, коррекция).</summary>
+    /// Проверяет общие параметры и специфичные для QR (версия, коррекция).
     public override void Validate()
     {
         base.Validate();

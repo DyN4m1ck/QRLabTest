@@ -1,4 +1,4 @@
 namespace QRLab.Core.Models.Generation;
 
-/// <summary>Родовой вид кода: квадратный QR-код или любой штрихкод.</summary>
+/// Родовой вид кода: квадратный QR-код или любой штрихкод.
 public enum CodeKind { QrCode, Barcode }
