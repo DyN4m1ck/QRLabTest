@@ -4,11 +4,17 @@ using QRLab.Core.Models.Mutations;
 
 namespace QRLab.Core.Models.Samples;
 
+/// <summary>
+/// Полное описание одного образца: номер, имя, закодированное содержимое,
+/// исходное PNG-изображение, кадры мутаций и настройки, которыми он создан.
+/// Это центральная сквозная модель между генерацией, редактированием,
+/// распознаванием и хранилищем.
+/// </summary>
 public sealed record SamplePreview(
-    int Number, 
+    int Number,
     string Name,
-    string Content, 
+    string Content,
     RasterImage Image,
-    IReadOnlyList<MutationFrame> Frames, 
+    IReadOnlyList<MutationFrame> Frames,
     GenerationOptions Settings
     );

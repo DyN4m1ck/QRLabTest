@@ -1,21 +1,33 @@
-using QRLab.Core.Models.Generation.Barcode;
+namespace QRLab.Core.Models.Generation.Barcode;
 
-namespace QRLab.Core.Models.Generation;
-
+/// <summary>
+/// Параметры генерации штрихкода EAN-13. Переопределяет PrepareContent:
+/// в пакетном режиме номер дополняется нулями до 12 цифр (контрольную цифру
+/// ZXing вычисляет сам), а в текстовом режиме содержимое проверяется на
+/// «чистые» ASCII-цифры нужной длины — иначе EAN-кодировщик ZXing принимает
+/// и русские буквы, и полноширинные цифры, выдавая некорректный код.
+/// </summary>
 public sealed record Ean13GenerationOptions : LinearBarcodeGenerationOptions
 {
+    /// <summary>Вид кода — EAN-13.</summary>
     public override BarcodeType BarcodeType => BarcodeType.Ean13;
 
-    public override string PrepareContent(int number)
+    /// <summary>Допустимая длина данных EAN-13: 12 или 13 цифр.</summary>
+    private const int DigitsLength = 13;
+
+    /// <summary>
+    /// Готовит содержимое: для шаблона с номером возвращает 12 цифр,
+    /// для произвольного текста — предварительно проверенную строку.
+    /// </summary>
+    public override string PrepareContent(int number) => Source == ContentSource.NumberedTemplate
+        ? number.ToString("D12", System.Globalization.CultureInfo.InvariantCulture)
+        : ValidateText(Template);
+
+    /// <summary>Проверяет, что текст — ровно 12 или 13 обычных ASCII-цифр.</summary>
+    private static string ValidateText(string text)
     {
-        var content = base.PrepareContent(number);
-        if (content.Length is not (12 or 13) || content.Any(c => c is < '0' or > '9'))
-            throw new ArgumentException("EAN-13: введите 12 цифр без контрольной суммы или 13 цифр с верной контрольной суммой (0–9).");
-        var sum = 0;
-        for (var i = 0; i < 12; i++) sum += (content[i] - '0') * (i % 2 == 0 ? 1 : 3);
-        var check = (char)('0' + (10 - sum % 10) % 10);
-        if (content.Length == 13 && content[12] != check)
-            throw new ArgumentException($"EAN-13: неверная контрольная сумма, ожидается последняя цифра {check}.");
-        return content[..12] + check;
+        if (text.Length is not (DigitsLength - 1 or DigitsLength) || !text.All(char.IsAsciiDigit))
+            throw new ArgumentException("Содержимое EAN-13 должно содержать 12 или 13 арабских цифр.");
+        return text;
     }
 }
