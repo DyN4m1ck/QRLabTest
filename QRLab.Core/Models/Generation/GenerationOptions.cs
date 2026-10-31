@@ -1,5 +1,6 @@
 using System.Globalization;
 using System.Text.Json.Serialization;
+using QRLab.Core.Models.Generation.Barcode;
 using QRLab.Core.Models.Generation.Qrcode;
 
 namespace QRLab.Core.Models.Generation;
